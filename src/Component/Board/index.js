@@ -2,30 +2,30 @@ import React from "react";
 import Square from "../Square";
 import "./Board.css";
 
-export default function Board(isPlayer) {
+const Board = (props) => {
+  const { isPlayer } = props;
+  //It could be player(p) or CPU(c)
   let ide = "";
-  isPlayer ? (ide = "p") : (ide = "c"); //It could be player or CPU
+  isPlayer ? (ide = "p") : (ide = "c");
 
-  let renderRow = (rowNumber) => {
+  let renderRow = (rowNumber, ide) => {
+    let columns = [];
+    for (let i = 0; i < 10; i++) {
+      columns.push(<Square id={`${ide}${rowNumber}${i}`} />);
+    }
+    return <>{columns}</>;
+  };
+
+  let renderBoard = () => {
+
     let rows = [];
     for (let i = 0; i < 10; i++) {
-      rows.push(<Square id={`${ide}${rowNumber}${i}`} />);
+      rows.push(<div className="board-row">{renderRow(i, ide)}</div>);
     }
     return <>{rows}</>;
   };
 
-  return (
-    <div>
-      <div className="board-row">{renderRow(0)}</div>
-      <div className="board-row">{renderRow(1)}</div>
-      <div className="board-row">{renderRow(2)}</div>
-      <div className="board-row">{renderRow(3)}</div>
-      <div className="board-row">{renderRow(4)}</div>
-      <div className="board-row">{renderRow(5)}</div>
-      <div className="board-row">{renderRow(6)}</div>
-      <div className="board-row">{renderRow(7)}</div>
-      <div className="board-row">{renderRow(8)}</div>
-      <div className="board-row">{renderRow(9)}</div>
-    </div>
-  );
-}
+  return renderBoard();
+};
+
+export default Board;

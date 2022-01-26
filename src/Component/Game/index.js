@@ -9,7 +9,7 @@ export default function Game() {
       <section className="main-container">
         <section className="top-container">
           <div className="game-board">
-            <Board isPlayer/>
+            <Board isPlayer={true}/>
           </div>
           <div className="right-panel">
             <input className="name-input" placeholder="Player name"></input>
