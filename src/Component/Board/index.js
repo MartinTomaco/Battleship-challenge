@@ -3,15 +3,21 @@ import Square from "../Square";
 import "./Board.css";
 
 const Board = (props) => {
+ 
   const { isPlayer } = props;
   //It could be player(p) or CPU(c)
+  
   let ide = "";
   isPlayer ? (ide = "p") : (ide = "c");
+
+  
+
+
 
   let renderRow = (rowNumber, ide) => {
     let columns = [];
     for (let i = 0; i < 10; i++) {
-      columns.push(<Square id={`${ide}${rowNumber}${i}`} />);
+      columns.push(<Square id={`${ide}${rowNumber}${i}`}/>);
     }
     return <>{columns}</>;
   };

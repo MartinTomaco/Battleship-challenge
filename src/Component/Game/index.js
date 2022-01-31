@@ -4,12 +4,15 @@ import React from "react";
 import Board from "../Board";
 
 export default function Game() {
+
   return (
     <div className="game">
       <section className="main-container">
         <section className="top-container">
           <div className="game-board">
+
             <Board isPlayer={true}/>
+
           </div>
           <div className="right-panel">
             <input className="name-input" placeholder="Player name"></input>
