@@ -17,7 +17,7 @@ const Board = (props) => {
   let renderRow = (rowNumber, ide) => {
     let columns = [];
     for (let i = 0; i < 10; i++) {
-      columns.push(<Square id={`${ide}${rowNumber}${i}`}/>);
+      columns.push(<Square key={`${rowNumber}${i}`} id={`${ide}${rowNumber}${i}`}/>);
     }
     return <>{columns}</>;
   };
@@ -26,7 +26,7 @@ const Board = (props) => {
 
     let rows = [];
     for (let i = 0; i < 10; i++) {
-      rows.push(<div className="board-row">{renderRow(i, ide)}</div>);
+      rows.push(<div key={i} className="board-row">{renderRow(i, ide)}</div>);
     }
     return <>{rows}</>;
   };
