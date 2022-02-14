@@ -3,16 +3,15 @@ import Square from "../Square";
 import "./Board.css";
 
 const Board = (props) => {
- 
+
+  
+
+
   const { isPlayer } = props;
   //It could be player(p) or CPU(c)
   
   let ide = "";
   isPlayer ? (ide = "p") : (ide = "c");
-
-  
-
-
 
   let renderRow = (rowNumber, ide) => {
     let columns = [];
