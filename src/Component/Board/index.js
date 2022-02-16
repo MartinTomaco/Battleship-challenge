@@ -1,33 +1,31 @@
-import React from "react";
-import Square from "../Square";
-import "./Board.css";
+import React from 'react';
+import Square from '../Square';
+import './Board.css';
 
 const Board = (props) => {
-
-  
-
-
   const { isPlayer } = props;
-  //It could be player(p) or CPU(c)
-  
-  let ide = "";
-  isPlayer ? (ide = "p") : (ide = "c");
+  // It could be player(p) or CPU(c)
 
-  let renderRow = (rowNumber, ide) => {
-    let columns = [];
-    for (let i = 0; i < 10; i++) {
-      columns.push(<Square key={`${rowNumber}${i}`} id={`${ide}${rowNumber}${i}`}/>);
+  let ide = '';
+
+  // eslint-disable-next-line no-unused-expressions
+  isPlayer ? (ide = 'p') : (ide = 'c');
+
+  // eslint-disable-next-line no-shadow
+  const renderRow = (rowNumber, ide) => {
+    const columns = [];
+    for (let i = 0; i < 10; i += 1) {
+      columns.push(<Square key={`${rowNumber}${i}`} id={`${ide}${rowNumber}${i}`} />);
     }
-    return <>{columns}</>;
+    return <div>{columns}</div>;
   };
 
-  let renderBoard = () => {
-
-    let rows = [];
-    for (let i = 0; i < 10; i++) {
+  const renderBoard = () => {
+    const rows = [];
+    for (let i = 0; i < 10; i += 1) {
       rows.push(<div key={i} className="board-row">{renderRow(i, ide)}</div>);
     }
-    return <>{rows}</>;
+    return <div>{rows}</div>;
   };
 
   return renderBoard();
