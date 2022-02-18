@@ -11,7 +11,7 @@ console.log(pMatrix, '\n');
 const ship = '4'; //  4 carrier - 3a 3b 3c cruisers - 2 submarine
 
 // This function suggests possible positions to the player
-const findSuggestedPos = (currentPos, previousPos, ship) => {
+const findSuggestedPos = (pMatrix, currentPos, previousPos, ship) => {
   const suggestedValues = [];
   let index;
   let idx;
@@ -59,7 +59,7 @@ const findSuggestedPos = (currentPos, previousPos, ship) => {
       index = [];
       idx = currentColumn.indexOf(ship);
       console.log('currentColumn: ', currentColumn);
-      console.log('firtsInColumn: ', firstInColumn);
+      console.log('firstInColumn: ', firstInColumn);
       while (idx !== -1) {
         index.push(idx);
         idx = currentColumn.indexOf(ship, idx + 1);
@@ -85,6 +85,8 @@ const findSuggestedPos = (currentPos, previousPos, ship) => {
       break;
   }
 };
+
+export default { findSuggestedPos };
 
 let previousPos = '95';
 let currentPos = '85';

@@ -19,10 +19,12 @@ margin: 30px;
   padding: 20px;
   margin: 30px;
 }
+.shipsButtons {
+  margin: 0 10px;
+}
 .bottom-container{
   margin: 20px auto;
 }
-.bottom-container>li:nth-of-type(1){
-  
-  color:lightcoral;
+.bottom-container>li{
+  margin: 5px 0;
 }
