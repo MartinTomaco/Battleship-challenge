@@ -1,20 +1,25 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Board from '../Board';
-import { setPlayerNameAction, toggleIsStarted } from '../../actions';
+import { setPlayerNameAction, toggleIsStarted, toggleIsSuggestedHorizontal } from '../../actions';
 import './Game.css';
 
-export default function Game() {
+function Game() {
   const dispatch = useDispatch();
   const isStarted = useSelector((state) => state.isStarted);
   const playerName = useSelector((state) => state.playerName);
 
   const isShipSelected = true;
 
+  const handleClick = () => {
+    dispatch(toggleIsSuggestedHorizontal());
+  };
+
   const renderShipsButton = () => {
     return (
       <>
         <button className="shipsButtons" type="button">Done</button>
+        <button onClick={handleClick} className="shipsButtons" type="button">Rotate</button>
         <button className="shipsButtons" type="button">Restart</button>
       </>
     );
@@ -72,3 +77,5 @@ export default function Game() {
     </div>
   );
 }
+
+export default Game;

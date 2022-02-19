@@ -1,5 +1,10 @@
 import {
-  ADD_NEW_SHIP_PART, SET_CURRENT_POSITION, SET_PLAYER_NAME, TOGGLE_GAME_STARTED,
+  ADD_NEW_SHIP,
+  SET_CURRENT_POSITION,
+  SET_PLAYER_NAME,
+  TOGGLE_GAME_STARTED,
+  SET_SUGGESTED_POSITION,
+  TOGGLE_IS_SUGGESTED_HORIZONTAL,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -18,13 +23,20 @@ const toggleIsStarted = () => {
 };
 export { toggleIsStarted };
 
-const addNewShipPart = (payload) => {
+const toggleIsSuggestedHorizontal = () => {
   return {
-    type: ADD_NEW_SHIP_PART,
+    type: TOGGLE_IS_SUGGESTED_HORIZONTAL,
+  };
+};
+export { toggleIsSuggestedHorizontal };
+
+const addNewShip = (payload) => {
+  return {
+    type: ADD_NEW_SHIP,
     payload,
   };
 };
-export { addNewShipPart };
+export { addNewShip };
 
 const setCurrentPosition = (payload) => {
   return {
@@ -33,3 +45,11 @@ const setCurrentPosition = (payload) => {
   };
 };
 export { setCurrentPosition };
+
+const setSuggestedPosition = (payload) => {
+  return {
+    type: SET_SUGGESTED_POSITION,
+    payload,
+  };
+};
+export { setSuggestedPosition };

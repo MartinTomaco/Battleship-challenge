@@ -18,3 +18,9 @@
 .square.selected {
   background: lightcoral;
 }
+.square.suggested {
+  background: rgb(250, 177, 177);
+}
+.square.forbidden {
+  background: rgb(251, 48, 48);
+}
