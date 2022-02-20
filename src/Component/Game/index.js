@@ -1,26 +1,36 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Board from '../Board';
-import { setPlayerNameAction, toggleIsStarted, toggleIsSuggestedHorizontal } from '../../actions';
+import {
+  eraseShip,
+  setPlayerNameAction,
+  toggleIsStarted,
+  toggleIsSuggestedHorizontal,
+  moveToNextShip,
+} from '../../actions';
 import './Game.css';
 
 function Game() {
   const dispatch = useDispatch();
   const isStarted = useSelector((state) => state.isStarted);
   const playerName = useSelector((state) => state.playerName);
+  const currentShipType = useSelector((state) => state.currentShipType);
 
-  const isShipSelected = true;
-
-  const handleClick = () => {
+  const handleClickDone = () => {
+    dispatch(moveToNextShip({ currentShipType }));
+  };
+  const handleClickRotate = () => {
     dispatch(toggleIsSuggestedHorizontal());
   };
-
+  const handleClickReset = () => {
+    dispatch(eraseShip({ shipToErase: currentShipType }));
+  };
   const renderShipsButton = () => {
     return (
       <>
-        <button className="shipsButtons" type="button">Done</button>
-        <button onClick={handleClick} className="shipsButtons" type="button">Rotate</button>
-        <button className="shipsButtons" type="button">Restart</button>
+        <button onClick={handleClickDone} className="shipsButtons" type="button">Done</button>
+        <button onClick={handleClickRotate} className="shipsButtons" type="button">Rotate</button>
+        <button onClick={handleClickReset} className="shipsButtons" type="button">Reset</button>
       </>
     );
   };
@@ -52,17 +62,69 @@ function Game() {
         </section>
         <section className="bottom-container">
           <b>Available ships:</b>
-          {isShipSelected && (
+
           <li>
             carrier of 4 spaces
+            {currentShipType === '4' && (renderShipsButton())}
+          </li>
+          <li>
+            cruiser of 3 spaces
+            {currentShipType === '3a' && (renderShipsButton())}
+          </li>
+          <li>
+            cruiser of 3 spaces
+            {currentShipType === '3b' && (renderShipsButton())}
+          </li>
+          <li>
+            cruiser of 3 spaces
+            {currentShipType === '3c' && (renderShipsButton())}
+          </li>
+          <li>
+            submarine of 2 spaces
+            {currentShipType === '2' && (renderShipsButton())}
+          </li>
+
+          {/*           {currentShipType === '3a' && (
+            <>
+              <li>carrier of 4 spaces</li>
+              <li>
+                cruiser of 3 spaces
+                {' '}
+                {renderShipsButton()}
+              </li>
+              <li>cruiser of 3 spaces</li>
+              <li>cruiser of 3 spaces</li>
+              <li>submarine of 2 spaces</li>
+            </>
+          )}
+          {currentShipType === '3b' && (
+            <>
+              <li>carrier of 4 spaces</li>
+              <li>cruiser of 3 spaces</li>
+              <li>
+                cruiser of 3 spaces
+                {' '}
+                {renderShipsButton()}
+              </li>
+              <li>cruiser of 3 spaces</li>
+              <li>submarine of 2 spaces</li>
+            </>
+
+          )}
+          {currentShipType === '3c' && (
+          <li>
+            cruiser of 3 spaces
             {' '}
             {renderShipsButton()}
           </li>
           )}
-          <li>cruiser of 3 spaces</li>
-          <li>cruiser of 3 spaces</li>
-          <li>cruiser of 3 spaces</li>
-          <li>submarine of 2 spaces</li>
+          {currentShipType === '2' && (
+          <li>
+            submarine of 2 spaces
+            {' '}
+            {renderShipsButton()}
+          </li>
+          )} */}
         </section>
         {isStarted && (
           <p>

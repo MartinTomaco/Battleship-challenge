@@ -1,10 +1,12 @@
 import {
+  MOVE_TO_NEXT_SHIP,
   ADD_NEW_SHIP,
   SET_CURRENT_POSITION,
   SET_PLAYER_NAME,
   TOGGLE_GAME_STARTED,
   SET_SUGGESTED_POSITION,
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
+  ERASE_SHIP,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -15,6 +17,14 @@ const setPlayerNameAction = (payload) => {
   };
 };
 export { setPlayerNameAction };
+
+const moveToNextShip = (payload) => {
+  return {
+    type: MOVE_TO_NEXT_SHIP,
+    payload,
+  };
+};
+export { moveToNextShip };
 
 const toggleIsStarted = () => {
   return {
@@ -37,6 +47,14 @@ const addNewShip = (payload) => {
   };
 };
 export { addNewShip };
+
+const eraseShip = (payload) => {
+  return {
+    type: ERASE_SHIP,
+    payload,
+  };
+};
+export { eraseShip };
 
 const setCurrentPosition = (payload) => {
   return {

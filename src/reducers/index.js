@@ -5,19 +5,21 @@ import {
   ADD_NEW_SHIP,
   SET_CURRENT_POSITION,
   SET_SUGGESTED_POSITION,
+  ERASE_SHIP,
+  MOVE_TO_NEXT_SHIP,
 } from '../actions/types';
 
 const INITIAL_STATE = {
   isPlayer: true,
-  value: '',
   playerBoard: Array(100).fill(0),
   cpuBoard: Array(100).fill(0),
+  shipOrder: ['4', '3a', '3b', '3c', '2'],
   playerName: '',
   isStarted: false,
   currentPos: [],
   previousPos: [],
   currentMousePos: [],
-  currentShipLength: 4,
+  currentShipType: '4',
   isSuggestedHorizontal: false,
   suggestedPositions: [],
   forbiddenPositions: [],
@@ -34,22 +36,55 @@ const reducer = (state = INITIAL_STATE, action) => {
     case TOGGLE_GAME_STARTED:
       return {
         ...state,
-        isStarted: !state.isStarted,
+        isStarted: !state.isStarted, // It should execute MOVE_TO_NEXT_SHIP?
       };
+    case MOVE_TO_NEXT_SHIP: {
+      const { shipOrder, currentShipType } = state;
+      const index = shipOrder.indexOf(currentShipType);
+      if (index + 1 < shipOrder.length) {
+        return {
+          ...state,
+          currentShipType: shipOrder[index + 1],
+        };
+      }
+      console.log('All player\'s ships has been located');
+      return {
+        ...state,
+      };
+    }
     case TOGGLE_IS_SUGGESTED_HORIZONTAL:
       return {
         ...state,
         isSuggestedHorizontal: !state.isSuggestedHorizontal,
       };
     case ADD_NEW_SHIP: {
-      const { currentShipLength, suggestedPositions } = state;
+      const { currentShipType, suggestedPositions } = state;
       const newPlayerBoard = [...state.playerBoard];
-      for (let index = 0; index < currentShipLength; index += 1) {
-        newPlayerBoard[suggestedPositions[index]] = action.payload.shipType;
+      for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
+        newPlayerBoard[suggestedPositions[index]] = currentShipType;
       }
       return {
         ...state,
         playerBoard: newPlayerBoard,
+      };
+    }
+    case ERASE_SHIP: {
+      const { shipToErase } = action.payload;
+      const newPlayerBoard = [...state.playerBoard];
+      const playerBoardWithOutShip = newPlayerBoard.map(
+        (element) => {
+          if (element === shipToErase) {
+            return 0;
+          }
+          return element;
+        },
+      );
+      /*       for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
+        newPlayerBoard[suggestedPositions[index]] = currentShipType;
+      } */
+      return {
+        ...state,
+        playerBoard: playerBoardWithOutShip,
       };
     }
     case SET_CURRENT_POSITION: {
@@ -60,9 +95,9 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case SET_SUGGESTED_POSITION: {
-      const { isSuggestedHorizontal } = state;
+      const { isSuggestedHorizontal, currentShipType } = state;
+      const shipLength = parseInt(currentShipType, 10);
       const { currentMousePos } = action.payload;
-      const shipLength = 4;
       const newSuggestedPositions = [];
       if (isSuggestedHorizontal) {
         for (let index = 0; index < shipLength; index += 1) {

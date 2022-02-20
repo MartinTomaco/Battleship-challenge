@@ -24,3 +24,12 @@
 .square.forbidden {
   background: rgb(251, 48, 48);
 }
+.square.carrier {
+  background: lightgreen;
+}
+.square.cruiser {
+  background: lightpink;
+}
+.square.submarine {
+  background: lightblue;
+}

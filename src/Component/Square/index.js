@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNewShip, setCurrentPosition, setSuggestedPosition } from '../../actions';
 
@@ -7,32 +7,42 @@ import './Square.css';
 function Square(props) {
   const dispatch = useDispatch();
   const playerBoard = useSelector((state) => state.playerBoard);
+  const currentShipType = useSelector((state) => state.currentShipType);
   const suggestedPositions = useSelector((state) => state.suggestedPositions);
   const forbiddenPositions = useSelector((state) => state.forbiddenPositions);
-  const [isSelected, setSelected] = useState(false);
 
   let { id } = props;
   id = Number(id);
 
   let addedClass = '';
-  const shipType = '4';
+  const ships = {
+    4: 'carrier',
+    '3a': 'cruiser',
+    '3b': 'cruiser',
+    '3c': 'cruiser',
+    2: 'submarine',
+  };
   // 4 carrier - 3a 3b 3c cruisers - 2 submarine
-  addedClass = isSelected ? ('selected') : (addedClass);
-  addedClass = suggestedPositions.some((element) => element === id) ? ('suggested') : (addedClass);
-  addedClass = forbiddenPositions.some((element) => element === id) ? ('forbidden') : (addedClass);
+  // addedClass = isSelected ? ('selected') : (addedClass);
+  addedClass = suggestedPositions.some((element) => element === id) ? (`${addedClass} suggested`) : (addedClass);
+  addedClass = forbiddenPositions.some((element) => element === id) ? (`${addedClass} forbidden`) : (addedClass);
+  addedClass = playerBoard[id] === '4' ? (`${addedClass} carrier`) : (addedClass);
+  addedClass = playerBoard[id] === '3a' ? (`${addedClass} cruiser`) : (addedClass);
+  addedClass = playerBoard[id] === '3b' ? (`${addedClass} cruiser`) : (addedClass);
+  addedClass = playerBoard[id] === '3c' ? (`${addedClass} cruiser`) : (addedClass);
+  addedClass = playerBoard[id] === '2' ? (`${addedClass} submarine`) : (addedClass);
 
-  const isPositionAvailable = (position) => {
-    return playerBoard[position] === 0;
+  const isShipAvailable = (ShipType) => {
+    return !playerBoard.some((element) => element === ShipType);
   };
 
   const handleClick = () => {
     dispatch(setCurrentPosition(id));
-    if (isPositionAvailable(id)) {
-      dispatch(addNewShip({ position: id, shipType }));
-      setSelected(!isSelected);
-      console.log(`Square id= ${id} ${addedClass}`);
+    if (isShipAvailable(currentShipType)) {
+      dispatch(addNewShip({ position: id, currentShipType }));
+      console.log(`A ${ships[currentShipType]} was located`);
     } else {
-      console.log(`Square id= ${id} it's not empty`);
+      console.log(`The position of ${ships[currentShipType]} has been already choose. Please press Reset to relocate.`);
     }
   };
 
