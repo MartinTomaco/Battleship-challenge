@@ -2,6 +2,7 @@ import {
   SET_PLAYER_NAME,
   TOGGLE_GAME_STARTED,
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
+  TOGGLE_IS_CHOOSING,
   ADD_NEW_SHIP,
   SET_CURRENT_POSITION,
   SET_SUGGESTED_POSITION,
@@ -20,6 +21,7 @@ const INITIAL_STATE = {
   previousPos: [],
   currentMousePos: [],
   currentShipType: '4',
+  isChoosing: true,
   isSuggestedHorizontal: false,
   suggestedPositions: [],
   forbiddenPositions: [],
@@ -27,6 +29,36 @@ const INITIAL_STATE = {
 
 // eslint-disable-next-line default-param-last
 const reducer = (state = INITIAL_STATE, action) => {
+  const hasValidatedPositions = (suggestedToValidate) => {
+    const {
+      isPlayer, isSuggestedHorizontal, playerBoard, cpuBoard, currentShipType,
+    } = state;
+    // I have to put an early return when max on suggestToValidate jump to next row
+    if (isSuggestedHorizontal) {
+      const firstInRow = Math.floor(Math.min(...suggestedToValidate) / 10) * 10;
+      const lastInRow = firstInRow + 9;
+      const maxSuggested = Math.max(...suggestedToValidate);
+      if (maxSuggested > lastInRow) {
+        return false;
+      }
+    }
+    console.log('suggestedToValidate:', suggestedToValidate);
+
+    const shipLength = parseInt(currentShipType, 10);
+    const subArrayBoard = [];
+    for (let index = 0; index < shipLength; index += 1) {
+      if (isPlayer) {
+        subArrayBoard.push(playerBoard[suggestedToValidate[index]]);
+      } else { // cpuBoard
+        subArrayBoard.push(cpuBoard[suggestedToValidate[index]]);
+      }
+    }
+    console.log('subArrayBoard:', subArrayBoard);
+    const result = !subArrayBoard.some((element) => element !== 0);
+    console.log(`hasValidatedPositions ${result}`);
+    return !subArrayBoard.some((element) => element !== 0);
+  };
+
   switch (action.type) {
     case SET_PLAYER_NAME:
       return {
@@ -37,6 +69,11 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isStarted: !state.isStarted, // It should execute MOVE_TO_NEXT_SHIP?
+      };
+    case TOGGLE_IS_CHOOSING:
+      return {
+        ...state,
+        isChoosing: !state.isChoosing,
       };
     case MOVE_TO_NEXT_SHIP: {
       const { shipOrder, currentShipType } = state;
@@ -79,9 +116,6 @@ const reducer = (state = INITIAL_STATE, action) => {
           return element;
         },
       );
-      /*       for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
-        newPlayerBoard[suggestedPositions[index]] = currentShipType;
-      } */
       return {
         ...state,
         playerBoard: playerBoardWithOutShip,
@@ -96,21 +130,28 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     case SET_SUGGESTED_POSITION: {
       const { isSuggestedHorizontal, currentShipType } = state;
-      const shipLength = parseInt(currentShipType, 10);
+      const shipLength = parseInt(currentShipType, 10); // ('3a') => 3
       const { currentMousePos } = action.payload;
       const newSuggestedPositions = [];
       if (isSuggestedHorizontal) {
         for (let index = 0; index < shipLength; index += 1) {
           newSuggestedPositions.push(currentMousePos + index);
         }
-      } else {
+      } else { // Vertical
         for (let index = 0; index < shipLength; index += 1) {
           newSuggestedPositions.push(currentMousePos + index * 10);
         }
       }
+      // Here we need to validate if it is a legal position
+      if (hasValidatedPositions(newSuggestedPositions)) {
+        return {
+          ...state,
+          suggestedPositions: newSuggestedPositions,
+        };
+      }
       return {
         ...state,
-        suggestedPositions: newSuggestedPositions,
+        suggestedPositions: [],
       };
     }
     default:

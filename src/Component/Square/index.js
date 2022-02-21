@@ -1,6 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewShip, setCurrentPosition, setSuggestedPosition } from '../../actions';
+import {
+  addNewShip,
+  setCurrentPosition,
+  setSuggestedPosition,
+  toggleIsChoosing,
+} from '../../actions';
 
 import './Square.css';
 
@@ -8,6 +13,7 @@ function Square(props) {
   const dispatch = useDispatch();
   const playerBoard = useSelector((state) => state.playerBoard);
   const currentShipType = useSelector((state) => state.currentShipType);
+  const isChoosing = useSelector((state) => state.isChoosing);
   const suggestedPositions = useSelector((state) => state.suggestedPositions);
   const forbiddenPositions = useSelector((state) => state.forbiddenPositions);
 
@@ -41,13 +47,16 @@ function Square(props) {
     if (isShipAvailable(currentShipType)) {
       dispatch(addNewShip({ position: id, currentShipType }));
       console.log(`A ${ships[currentShipType]} was located`);
+      dispatch(toggleIsChoosing());
     } else {
       console.log(`The position of ${ships[currentShipType]} has been already choose. Please press Reset to relocate.`);
     }
   };
 
   const handleMouseOver = () => {
-    dispatch(setSuggestedPosition({ currentMousePos: id }));
+    if (isChoosing) {
+      dispatch(setSuggestedPosition({ currentMousePos: id }));
+    }
   };
 
   return (

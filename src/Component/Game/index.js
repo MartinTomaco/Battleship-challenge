@@ -7,6 +7,7 @@ import {
   toggleIsStarted,
   toggleIsSuggestedHorizontal,
   moveToNextShip,
+  toggleIsChoosing,
 } from '../../actions';
 import './Game.css';
 
@@ -18,6 +19,7 @@ function Game() {
 
   const handleClickDone = () => {
     dispatch(moveToNextShip({ currentShipType }));
+    dispatch(toggleIsChoosing());
   };
   const handleClickRotate = () => {
     dispatch(toggleIsSuggestedHorizontal());
@@ -25,11 +27,16 @@ function Game() {
   const handleClickReset = () => {
     dispatch(eraseShip({ shipToErase: currentShipType }));
   };
+  const handleKeyDown = (event) => {
+    if (event.key === 'r') {
+      dispatch(toggleIsSuggestedHorizontal());
+    }
+  };
   const renderShipsButton = () => {
     return (
       <>
         <button onClick={handleClickDone} className="shipsButtons" type="button">Done</button>
-        <button onClick={handleClickRotate} className="shipsButtons" type="button">Rotate</button>
+        <button onClick={handleClickRotate} onKeyDown={handleKeyDown} className="shipsButtons" type="button">Rotate</button>
         <button onClick={handleClickReset} className="shipsButtons" type="button">Reset</button>
       </>
     );
@@ -83,48 +90,6 @@ function Game() {
             submarine of 2 spaces
             {currentShipType === '2' && (renderShipsButton())}
           </li>
-
-          {/*           {currentShipType === '3a' && (
-            <>
-              <li>carrier of 4 spaces</li>
-              <li>
-                cruiser of 3 spaces
-                {' '}
-                {renderShipsButton()}
-              </li>
-              <li>cruiser of 3 spaces</li>
-              <li>cruiser of 3 spaces</li>
-              <li>submarine of 2 spaces</li>
-            </>
-          )}
-          {currentShipType === '3b' && (
-            <>
-              <li>carrier of 4 spaces</li>
-              <li>cruiser of 3 spaces</li>
-              <li>
-                cruiser of 3 spaces
-                {' '}
-                {renderShipsButton()}
-              </li>
-              <li>cruiser of 3 spaces</li>
-              <li>submarine of 2 spaces</li>
-            </>
-
-          )}
-          {currentShipType === '3c' && (
-          <li>
-            cruiser of 3 spaces
-            {' '}
-            {renderShipsButton()}
-          </li>
-          )}
-          {currentShipType === '2' && (
-          <li>
-            submarine of 2 spaces
-            {' '}
-            {renderShipsButton()}
-          </li>
-          )} */}
         </section>
         {isStarted && (
           <p>

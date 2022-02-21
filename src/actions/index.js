@@ -6,6 +6,7 @@ import {
   TOGGLE_GAME_STARTED,
   SET_SUGGESTED_POSITION,
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
+  TOGGLE_IS_CHOOSING,
   ERASE_SHIP,
 } from './types';
 
@@ -32,6 +33,13 @@ const toggleIsStarted = () => {
   };
 };
 export { toggleIsStarted };
+
+const toggleIsChoosing = () => {
+  return {
+    type: TOGGLE_IS_CHOOSING,
+  };
+};
+export { toggleIsChoosing };
 
 const toggleIsSuggestedHorizontal = () => {
   return {
