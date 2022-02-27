@@ -9,6 +9,7 @@ import {
   TOGGLE_IS_CHOOSING,
   ERASE_SHIP,
   SET_CPU_FLEET,
+  SET_IS_CHOOSING,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -41,6 +42,14 @@ const toggleIsChoosing = () => {
   };
 };
 export { toggleIsChoosing };
+
+const setIsChoosing = (payload) => {
+  return {
+    type: SET_IS_CHOOSING,
+    payload,
+  };
+};
+export { setIsChoosing };
 
 const toggleIsSuggestedHorizontal = () => {
   return {

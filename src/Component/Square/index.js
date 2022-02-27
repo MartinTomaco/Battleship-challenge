@@ -2,9 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addNewShip,
+  eraseShip,
   setCurrentPosition,
   setSuggestedPosition,
-  toggleIsChoosing,
 } from '../../actions';
 
 import './Square.css';
@@ -38,25 +38,17 @@ function Square(props) {
   addedClass = playerBoard[id] === '3c' ? (`${addedClass} cruiser`) : (addedClass);
   addedClass = playerBoard[id] === '2' ? (`${addedClass} submarine`) : (addedClass);
 
-  const isShipAvailable = (ShipType) => {
-    return !playerBoard.some((element) => element === ShipType);
-  };
-
   const handleClick = () => {
     dispatch(setCurrentPosition(id));
-    if (isShipAvailable(currentShipType)) {
-      if (!(suggestedPositions.length)) { // Early return when there are not positions available
-        console.log('suggestedPositions:', suggestedPositions);
-        console.log('suggested is empty');
-        return;
-      }
-      dispatch(addNewShip({ position: id, currentShipType }));
-      console.log(`A ${ships[currentShipType]} was located`);
+    dispatch(eraseShip({ shipToErase: currentShipType }));
+    if (!(suggestedPositions.length)) { // Early return when there are not positions available
       console.log('suggestedPositions:', suggestedPositions);
-      dispatch(toggleIsChoosing());
-    } else {
-      console.log(`The position of ${ships[currentShipType]} has been already choose. Please press Reset to relocate.`);
+      console.log('suggested is empty');
+      return;
     }
+    dispatch(addNewShip({ position: id, currentShipType }));
+    console.log(`A ${ships[currentShipType]} was located`);
+    console.log('suggestedPositions:', suggestedPositions);
   };
 
   const handleMouseOver = () => {

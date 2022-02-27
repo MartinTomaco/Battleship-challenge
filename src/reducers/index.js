@@ -4,6 +4,7 @@ import {
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
   TOGGLE_IS_CHOOSING,
   ADD_NEW_SHIP,
+  SET_IS_CHOOSING,
   SET_CURRENT_POSITION,
   SET_SUGGESTED_POSITION,
   ERASE_SHIP,
@@ -73,6 +74,13 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         isChoosing: !state.isChoosing,
       };
+    case SET_IS_CHOOSING: {
+      const { isChoosing } = action.payload;
+      return {
+        ...state,
+        isChoosing,
+      };
+    }
     case MOVE_TO_NEXT_SHIP: {
       const { shipOrder, currentShipType } = state;
       const index = shipOrder.indexOf(currentShipType);

@@ -5,6 +5,7 @@ import {
   eraseShip,
   setPlayerNameAction,
   toggleIsStarted,
+  setIsChoosing,
   toggleIsChoosing,
   toggleIsSuggestedHorizontal,
   moveToNextShip,
@@ -22,18 +23,18 @@ function Game() {
   const handleClickDone = () => {
     if (currentShipType === '2') {
       dispatch(moveToNextShip({ currentShipType }));
+      dispatch(setIsChoosing({ isChoosing: false }));
       dispatch(setCPUFleet());
       return;
     }
     dispatch(moveToNextShip({ currentShipType }));
-    dispatch(toggleIsChoosing());
   };
   const handleClickRotate = () => {
     dispatch(toggleIsSuggestedHorizontal());
   };
   const handleClickReset = () => {
     dispatch(eraseShip({ shipToErase: currentShipType }));
-    dispatch(toggleIsChoosing());
+    dispatch(setIsChoosing({ isChoosing: true }));
   };
   const handleKeyDown = (event) => {
     if (event.key === 'r') {

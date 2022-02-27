@@ -9,3 +9,4 @@ export const ERASE_SHIP = 'ERASE_SHIP';
 export const MOVE_TO_NEXT_SHIP = 'MOVE_TO_NEXT_SHIP';
 export const TOGGLE_IS_CHOOSING = 'TOGGLE_IS_CHOOSING';
 export const SET_CPU_FLEET = 'SET_CPU_FLEET';
+export const SET_IS_CHOOSING = 'SET_IS_CHOOSING';
