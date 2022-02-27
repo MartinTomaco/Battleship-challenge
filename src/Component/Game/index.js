@@ -5,9 +5,10 @@ import {
   eraseShip,
   setPlayerNameAction,
   toggleIsStarted,
+  toggleIsChoosing,
   toggleIsSuggestedHorizontal,
   moveToNextShip,
-  toggleIsChoosing,
+  setCPUFleet,
 } from '../../actions';
 import './Game.css';
 
@@ -16,8 +17,14 @@ function Game() {
   const isStarted = useSelector((state) => state.isStarted);
   const playerName = useSelector((state) => state.playerName);
   const currentShipType = useSelector((state) => state.currentShipType);
+  const shipPlaced = useSelector((state) => state.shipPlaced);
 
   const handleClickDone = () => {
+    if (currentShipType === '2') {
+      dispatch(moveToNextShip({ currentShipType }));
+      dispatch(setCPUFleet());
+      return;
+    }
     dispatch(moveToNextShip({ currentShipType }));
     dispatch(toggleIsChoosing());
   };
@@ -26,6 +33,7 @@ function Game() {
   };
   const handleClickReset = () => {
     dispatch(eraseShip({ shipToErase: currentShipType }));
+    dispatch(toggleIsChoosing());
   };
   const handleKeyDown = (event) => {
     if (event.key === 'r') {
@@ -35,7 +43,7 @@ function Game() {
   const renderShipsButton = () => {
     return (
       <>
-        <button onClick={handleClickDone} className="shipsButtons" type="button">Done</button>
+        <button disabled={!shipPlaced[currentShipType]} onClick={handleClickDone} className="shipsButtons" type="button">Done</button>
         <button onClick={handleClickRotate} onKeyDown={handleKeyDown} className="shipsButtons" type="button">Rotate</button>
         <button onClick={handleClickReset} className="shipsButtons" type="button">Reset</button>
       </>
@@ -59,9 +67,13 @@ function Game() {
               placeholder="Player name"
             />
             <button
+              disabled={isStarted}
               type="button"
               className="startGame-button"
-              onClick={() => dispatch(toggleIsStarted())}
+              onClick={() => {
+                dispatch(toggleIsChoosing());
+                dispatch(toggleIsStarted());
+              }}
             >
               Start Game
             </button>
@@ -72,7 +84,7 @@ function Game() {
 
           <li>
             carrier of 4 spaces
-            {currentShipType === '4' && (renderShipsButton())}
+            {currentShipType === '4' && isStarted && (renderShipsButton())}
           </li>
           <li>
             cruiser of 3 spaces

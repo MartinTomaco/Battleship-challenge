@@ -14,14 +14,17 @@ const INITIAL_STATE = {
   isPlayer: true,
   playerBoard: Array(100).fill(0),
   cpuBoard: Array(100).fill(0),
-  shipOrder: ['4', '3a', '3b', '3c', '2'],
+  shipOrder: ['4', '3a', '3b', '3c', '2', '4_cpu', '3a_cpu', '3b_cpu', '3c_cpu', '2_cpu'],
+  shipPlaced: {
+    4: false, '3a': false, '3b': false, '3c': false, 2: false, '4_cpu': false, '3a_cpu': false, '3b_cpu': false, '3c_cpu': false, '2_cpu': false,
+  },
   playerName: '',
   isStarted: false,
   currentPos: [],
   previousPos: [],
   currentMousePos: [],
   currentShipType: '4',
-  isChoosing: true,
+  isChoosing: false,
   isSuggestedHorizontal: false,
   suggestedPositions: [],
   forbiddenPositions: [],
@@ -42,8 +45,6 @@ const reducer = (state = INITIAL_STATE, action) => {
         return false;
       }
     }
-    console.log('suggestedToValidate:', suggestedToValidate);
-
     const shipLength = parseInt(currentShipType, 10);
     const subArrayBoard = [];
     for (let index = 0; index < shipLength; index += 1) {
@@ -53,9 +54,6 @@ const reducer = (state = INITIAL_STATE, action) => {
         subArrayBoard.push(cpuBoard[suggestedToValidate[index]]);
       }
     }
-    console.log('subArrayBoard:', subArrayBoard);
-    const result = !subArrayBoard.some((element) => element !== 0);
-    console.log(`hasValidatedPositions ${result}`);
     return !subArrayBoard.some((element) => element !== 0);
   };
 
@@ -97,17 +95,21 @@ const reducer = (state = INITIAL_STATE, action) => {
     case ADD_NEW_SHIP: {
       const { currentShipType, suggestedPositions } = state;
       const newPlayerBoard = [...state.playerBoard];
+      const newShipPlaced = { ...state.shipPlaced };
       for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
         newPlayerBoard[suggestedPositions[index]] = currentShipType;
       }
+      newShipPlaced[currentShipType] = true;
       return {
         ...state,
         playerBoard: newPlayerBoard,
+        shipPlaced: newShipPlaced,
       };
     }
     case ERASE_SHIP: {
       const { shipToErase } = action.payload;
       const newPlayerBoard = [...state.playerBoard];
+      const newShipPlaced = { ...state.shipPlaced };
       const playerBoardWithOutShip = newPlayerBoard.map(
         (element) => {
           if (element === shipToErase) {
@@ -116,9 +118,11 @@ const reducer = (state = INITIAL_STATE, action) => {
           return element;
         },
       );
+      newShipPlaced[shipToErase] = false;
       return {
         ...state,
         playerBoard: playerBoardWithOutShip,
+        shipPlaced: newShipPlaced,
       };
     }
     case SET_CURRENT_POSITION: {

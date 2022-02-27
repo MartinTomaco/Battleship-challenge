@@ -8,6 +8,7 @@ import {
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
   TOGGLE_IS_CHOOSING,
   ERASE_SHIP,
+  SET_CPU_FLEET,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -79,3 +80,11 @@ const setSuggestedPosition = (payload) => {
   };
 };
 export { setSuggestedPosition };
+
+const setCPUFleet = (payload) => {
+  return {
+    type: SET_CPU_FLEET,
+    payload,
+  };
+};
+export { setCPUFleet };
