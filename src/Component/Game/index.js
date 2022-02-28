@@ -9,7 +9,9 @@ import {
   toggleIsChoosing,
   toggleIsSuggestedHorizontal,
   moveToNextShip,
-  setCPUFleet,
+  setAutoCpuSuggestPosition,
+  setIsPlayer,
+  addNewShip,
 } from '../../actions';
 import './Game.css';
 
@@ -24,7 +26,7 @@ function Game() {
     if (currentShipType === '2') {
       dispatch(moveToNextShip({ currentShipType }));
       dispatch(setIsChoosing({ isChoosing: false }));
-      dispatch(setCPUFleet());
+      dispatch(setAutoCpuSuggestPosition());
       return;
     }
     dispatch(moveToNextShip({ currentShipType }));
@@ -40,6 +42,18 @@ function Game() {
     if (event.key === 'r') {
       dispatch(toggleIsSuggestedHorizontal());
     }
+  };
+  const handleCPUStartButton = () => {
+    dispatch(moveToNextShip({ currentShipType: '2' })); // Ship: 2 is the last player ship
+    dispatch(setIsPlayer({ isPlayer: false }));
+    for (let index = 0; index < 5; index += 1) {
+      dispatch(setAutoCpuSuggestPosition());
+      dispatch(addNewShip());
+      dispatch(moveToNextShip());
+    }
+  };
+  const handleShowCPUFleetButton = () => {
+    console.log('handleShowCPUFleetButton');
   };
   const renderShipsButton = () => {
     return (
@@ -82,19 +96,19 @@ function Game() {
               type="button"
               className="startGame-button"
               onClick={() => {
-                dispatch(moveToNextShip({ currentShipType: '2' })); // Ship: 2 is the last player ship
+                handleCPUStartButton();
               }}
             >
-              dispatch(moveToNextShip)
+              setCPUFleet()
             </button>
             <button
               type="button"
               className="startGame-button"
               onClick={() => {
-                dispatch(setCPUFleet());
+                handleShowCPUFleetButton();
               }}
             >
-              setCPUFleet()
+              showCPUFleet()
             </button>
           </div>
         </section>

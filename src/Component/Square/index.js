@@ -12,6 +12,7 @@ import './Square.css';
 function Square(props) {
   const dispatch = useDispatch();
   const playerBoard = useSelector((state) => state.playerBoard);
+  const cpuBoard = useSelector((state) => state.cpuBoard);
   const currentShipType = useSelector((state) => state.currentShipType);
   const isChoosing = useSelector((state) => state.isChoosing);
   const suggestedPositions = useSelector((state) => state.suggestedPositions);
@@ -37,6 +38,11 @@ function Square(props) {
   addedClass = playerBoard[id] === '3b' ? (`${addedClass} cruiser`) : (addedClass);
   addedClass = playerBoard[id] === '3c' ? (`${addedClass} cruiser`) : (addedClass);
   addedClass = playerBoard[id] === '2' ? (`${addedClass} submarine`) : (addedClass);
+  addedClass = cpuBoard[id] === '4_cpu' ? (`${addedClass} carrier`) : (addedClass);
+  addedClass = cpuBoard[id] === '3a_cpu' ? (`${addedClass} cruiser`) : (addedClass);
+  addedClass = cpuBoard[id] === '3b_cpu' ? (`${addedClass} cruiser`) : (addedClass);
+  addedClass = cpuBoard[id] === '3c_cpu' ? (`${addedClass} cruiser`) : (addedClass);
+  addedClass = cpuBoard[id] === '2_cpu' ? (`${addedClass} submarine`) : (addedClass);
 
   const handleClick = () => {
     dispatch(setCurrentPosition(id));

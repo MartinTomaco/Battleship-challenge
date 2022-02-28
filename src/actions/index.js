@@ -8,8 +8,9 @@ import {
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
   TOGGLE_IS_CHOOSING,
   ERASE_SHIP,
-  SET_CPU_FLEET,
+  SET_AUTO_CPU_SUGGEST_POSITION,
   SET_IS_CHOOSING,
+  SET_IS_PLAYER,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -51,6 +52,14 @@ const setIsChoosing = (payload) => {
 };
 export { setIsChoosing };
 
+const setIsPlayer = (payload) => {
+  return {
+    type: SET_IS_PLAYER,
+    payload,
+  };
+};
+export { setIsPlayer };
+
 const toggleIsSuggestedHorizontal = () => {
   return {
     type: TOGGLE_IS_SUGGESTED_HORIZONTAL,
@@ -90,10 +99,10 @@ const setSuggestedPosition = (payload) => {
 };
 export { setSuggestedPosition };
 
-const setCPUFleet = (payload) => {
+const setAutoCpuSuggestPosition = (payload) => {
   return {
-    type: SET_CPU_FLEET,
+    type: SET_AUTO_CPU_SUGGEST_POSITION,
     payload,
   };
 };
-export { setCPUFleet };
+export { setAutoCpuSuggestPosition };

@@ -9,7 +9,8 @@ import {
   SET_SUGGESTED_POSITION,
   ERASE_SHIP,
   MOVE_TO_NEXT_SHIP,
-  SET_CPU_FLEET,
+  SET_AUTO_CPU_SUGGEST_POSITION,
+  SET_IS_PLAYER,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -34,9 +35,17 @@ const INITIAL_STATE = {
 
 // eslint-disable-next-line default-param-last
 const reducer = (state = INITIAL_STATE, action) => {
-  const hasValidatedPositions = (suggestedToValidate) => {
+  const setRandomSuggestedHorizontal = () => {
+    const { isSuggestedHorizontal } = state;
+    let newIsSuggestedHorizontal = isSuggestedHorizontal;
+    if (Math.round(Math.random())) {
+      newIsSuggestedHorizontal = !newIsSuggestedHorizontal; // Vertical or horizontal randomly
+    }
+    return newIsSuggestedHorizontal;
+  };
+  const hasValidatedPositions = (suggestedToValidate, isSuggestedHorizontal) => {
     const {
-      isPlayer, isSuggestedHorizontal, playerBoard, cpuBoard, currentShipType,
+      isPlayer, playerBoard, cpuBoard, currentShipType,
     } = state;
     // I have to put an early return when max on suggestToValidate jump to next row
     if (isSuggestedHorizontal) {
@@ -58,8 +67,8 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     return !subArrayBoard.some((element) => element !== 0);
   };
-  const buildSuggestedCurrentShip = (currentPos) => {
-    const { isSuggestedHorizontal, currentShipType } = state;
+  const buildSuggestedCurrentShip = (currentPos, isSuggestedHorizontal) => {
+    const { currentShipType } = state;
     const shipLength = parseInt(currentShipType, 10); // ('4_CPU') => 4
     const newSuggestedPositions = [];
     if (isSuggestedHorizontal) {
@@ -74,23 +83,21 @@ const reducer = (state = INITIAL_STATE, action) => {
     return newSuggestedPositions;
   };
   switch (action.type) {
-    case SET_CPU_FLEET: {
-      const { isSuggestedHorizontal } = state;
-      let newIsSuggestedHorizontal = isSuggestedHorizontal;
-      if (Math.round(Math.random())) {
-        newIsSuggestedHorizontal = !newIsSuggestedHorizontal; // Vertical or horizontal randomly
-      }
-      // Here should implement a 'while' until hasValidatedPositions be true
-      const newCurrentPos = Math.floor(Math.random() * 100);
-      const suggestedPositions = buildSuggestedCurrentShip(newCurrentPos);
-      console.log('suggestedPositions:', suggestedPositions);
-      console.log('hasValidatedPositions:', hasValidatedPositions(suggestedPositions));
-      hasValidatedPositions(suggestedPositions);
-      console.log('hasValidatedPositions:', hasValidatedPositions(suggestedPositions));
+    case SET_AUTO_CPU_SUGGEST_POSITION: {
+      let newIsSuggestedHorizontal; let newCurrentPos; let newSuggestedPositions; let isValidated;
+
+      do { // It raffles a ship position until it is valid
+        newCurrentPos = Math.floor(Math.random() * 100);
+        newIsSuggestedHorizontal = setRandomSuggestedHorizontal();
+        newSuggestedPositions = buildSuggestedCurrentShip(newCurrentPos, newIsSuggestedHorizontal);
+        isValidated = hasValidatedPositions(newSuggestedPositions, newIsSuggestedHorizontal);
+      } while (!isValidated);
+
       return {
         ...state,
         currentPos: newCurrentPos,
         isSuggestedHorizontal: newIsSuggestedHorizontal,
+        suggestedPositions: newSuggestedPositions,
       };
     }
     case SET_PLAYER_NAME:
@@ -101,7 +108,7 @@ const reducer = (state = INITIAL_STATE, action) => {
     case TOGGLE_GAME_STARTED:
       return {
         ...state,
-        isStarted: !state.isStarted, // It should execute MOVE_TO_NEXT_SHIP?
+        isStarted: !state.isStarted,
       };
     case TOGGLE_IS_CHOOSING:
       return {
@@ -120,9 +127,21 @@ const reducer = (state = INITIAL_STATE, action) => {
         isChoosing,
       };
     }
+    case SET_IS_PLAYER: {
+      const { isPlayer } = action.payload;
+      return {
+        ...state,
+        isPlayer,
+      };
+    }
     case MOVE_TO_NEXT_SHIP: {
-      const { shipOrder } = state;
-      const { currentShipType } = action.payload;
+      const { shipOrder, currentShipType: stateCurrentShipType } = state;
+      console.log('stateCurrentShipType:', stateCurrentShipType);
+      const payloadCurrentShipType = action?.payload?.currentShipType;
+      console.log('payloadCurrentShipType:', payloadCurrentShipType);
+      // If it has payload take itm if not take from state
+      const currentShipType = payloadCurrentShipType || stateCurrentShipType;
+      console.log('currentShipType:', currentShipType);
       const index = shipOrder.indexOf(currentShipType);
       if (index + 1 < shipOrder.length) {
         return {
@@ -130,30 +149,40 @@ const reducer = (state = INITIAL_STATE, action) => {
           currentShipType: shipOrder[index + 1],
         };
       }
-      console.log('All player\'s ships has been located');
+      console.log('All ships has been located');
       return {
         ...state,
       };
     }
     case ADD_NEW_SHIP: {
-      const { currentShipType, suggestedPositions } = state;
+      const { isPlayer, currentShipType, suggestedPositions } = state;
       const newPlayerBoard = [...state.playerBoard];
+      const newCpuBoard = [...state.cpuBoard];
       const newShipPlaced = { ...state.shipPlaced };
-      for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
-        newPlayerBoard[suggestedPositions[index]] = currentShipType;
+      if (isPlayer) {
+        for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
+          newPlayerBoard[suggestedPositions[index]] = currentShipType;
+        }
+      } else {
+        for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
+          newCpuBoard[suggestedPositions[index]] = currentShipType;
+        }
       }
+
       newShipPlaced[currentShipType] = true;
       return {
         ...state,
         playerBoard: newPlayerBoard,
+        cpuBoard: newCpuBoard,
         shipPlaced: newShipPlaced,
       };
     }
     case ERASE_SHIP: {
+      // Should implement cpuBoard case
       const { shipToErase } = action.payload;
       const newPlayerBoard = [...state.playerBoard];
       const newShipPlaced = { ...state.shipPlaced };
-      const playerBoardWithOutShip = newPlayerBoard.map(
+      const playerBoardWithoutShip = newPlayerBoard.map(
         (element) => {
           if (element === shipToErase) {
             return 0;
@@ -164,7 +193,7 @@ const reducer = (state = INITIAL_STATE, action) => {
       newShipPlaced[shipToErase] = false;
       return {
         ...state,
-        playerBoard: playerBoardWithOutShip,
+        playerBoard: playerBoardWithoutShip,
         shipPlaced: newShipPlaced,
       };
     }
@@ -176,10 +205,14 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case SET_SUGGESTED_POSITION: {
+      const { isSuggestedHorizontal } = state;
       const { currentMousePos } = action.payload;
-      const newSuggestedPositions = buildSuggestedCurrentShip(currentMousePos);
+      const newSuggestedPositions = buildSuggestedCurrentShip(
+        currentMousePos,
+        isSuggestedHorizontal,
+      );
       // Here we need to validate if it is a legal position
-      if (hasValidatedPositions(newSuggestedPositions)) {
+      if (hasValidatedPositions(newSuggestedPositions, isSuggestedHorizontal)) {
         return {
           ...state,
           suggestedPositions: newSuggestedPositions,
