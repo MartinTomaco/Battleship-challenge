@@ -9,6 +9,7 @@ import {
   SET_SUGGESTED_POSITION,
   ERASE_SHIP,
   MOVE_TO_NEXT_SHIP,
+  SET_CPU_FLEET,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -57,8 +58,41 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     return !subArrayBoard.some((element) => element !== 0);
   };
-
+  const buildSuggestedCurrentShip = (currentPos) => {
+    const { isSuggestedHorizontal, currentShipType } = state;
+    const shipLength = parseInt(currentShipType, 10); // ('4_CPU') => 4
+    const newSuggestedPositions = [];
+    if (isSuggestedHorizontal) {
+      for (let index = 0; index < shipLength; index += 1) {
+        newSuggestedPositions.push(currentPos + index);
+      }
+    } else { // Vertical
+      for (let index = 0; index < shipLength; index += 1) {
+        newSuggestedPositions.push(currentPos + index * 10);
+      }
+    }
+    return newSuggestedPositions;
+  };
   switch (action.type) {
+    case SET_CPU_FLEET: {
+      const { isSuggestedHorizontal } = state;
+      let newIsSuggestedHorizontal = isSuggestedHorizontal;
+      if (Math.round(Math.random())) {
+        newIsSuggestedHorizontal = !newIsSuggestedHorizontal; // Vertical or horizontal randomly
+      }
+      // Here should implement a 'while' until hasValidatedPositions be true
+      const newCurrentPos = Math.floor(Math.random() * 100);
+      const suggestedPositions = buildSuggestedCurrentShip(newCurrentPos);
+      console.log('suggestedPositions:', suggestedPositions);
+      console.log('hasValidatedPositions:', hasValidatedPositions(suggestedPositions));
+      hasValidatedPositions(suggestedPositions);
+      console.log('hasValidatedPositions:', hasValidatedPositions(suggestedPositions));
+      return {
+        ...state,
+        currentPos: newCurrentPos,
+        isSuggestedHorizontal: newIsSuggestedHorizontal,
+      };
+    }
     case SET_PLAYER_NAME:
       return {
         ...state,
@@ -74,6 +108,11 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         isChoosing: !state.isChoosing,
       };
+    case TOGGLE_IS_SUGGESTED_HORIZONTAL:
+      return {
+        ...state,
+        isSuggestedHorizontal: !state.isSuggestedHorizontal,
+      };
     case SET_IS_CHOOSING: {
       const { isChoosing } = action.payload;
       return {
@@ -82,7 +121,8 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case MOVE_TO_NEXT_SHIP: {
-      const { shipOrder, currentShipType } = state;
+      const { shipOrder } = state;
+      const { currentShipType } = action.payload;
       const index = shipOrder.indexOf(currentShipType);
       if (index + 1 < shipOrder.length) {
         return {
@@ -95,11 +135,6 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
       };
     }
-    case TOGGLE_IS_SUGGESTED_HORIZONTAL:
-      return {
-        ...state,
-        isSuggestedHorizontal: !state.isSuggestedHorizontal,
-      };
     case ADD_NEW_SHIP: {
       const { currentShipType, suggestedPositions } = state;
       const newPlayerBoard = [...state.playerBoard];
@@ -141,19 +176,8 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case SET_SUGGESTED_POSITION: {
-      const { isSuggestedHorizontal, currentShipType } = state;
-      const shipLength = parseInt(currentShipType, 10); // ('3a') => 3
       const { currentMousePos } = action.payload;
-      const newSuggestedPositions = [];
-      if (isSuggestedHorizontal) {
-        for (let index = 0; index < shipLength; index += 1) {
-          newSuggestedPositions.push(currentMousePos + index);
-        }
-      } else { // Vertical
-        for (let index = 0; index < shipLength; index += 1) {
-          newSuggestedPositions.push(currentMousePos + index * 10);
-        }
-      }
+      const newSuggestedPositions = buildSuggestedCurrentShip(currentMousePos);
       // Here we need to validate if it is a legal position
       if (hasValidatedPositions(newSuggestedPositions)) {
         return {

@@ -78,6 +78,24 @@ function Game() {
             >
               Start Game
             </button>
+            <button
+              type="button"
+              className="startGame-button"
+              onClick={() => {
+                dispatch(moveToNextShip({ currentShipType: '2' })); // Ship: 2 is the last player ship
+              }}
+            >
+              dispatch(moveToNextShip)
+            </button>
+            <button
+              type="button"
+              className="startGame-button"
+              onClick={() => {
+                dispatch(setCPUFleet());
+              }}
+            >
+              setCPUFleet()
+            </button>
           </div>
         </section>
         <section className="bottom-container">
