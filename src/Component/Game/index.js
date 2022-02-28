@@ -43,7 +43,14 @@ function Game() {
       dispatch(toggleIsSuggestedHorizontal());
     }
   };
-  const handleCPUStartButton = () => {
+  // This handle is only for debugging
+  const handleSetCPUFleetButton = () => {
+    // First delete all possible cpu ships
+    dispatch(eraseShip({ shipToErase: '4_cpu' }));
+    dispatch(eraseShip({ shipToErase: '3a_cpu' }));
+    dispatch(eraseShip({ shipToErase: '3b_cpu' }));
+    dispatch(eraseShip({ shipToErase: '3c_cpu' }));
+    dispatch(eraseShip({ shipToErase: '2_cpu' }));
     dispatch(moveToNextShip({ currentShipType: '2' })); // Ship: 2 is the last player ship
     dispatch(setIsPlayer({ isPlayer: false }));
     for (let index = 0; index < 5; index += 1) {
@@ -96,7 +103,7 @@ function Game() {
               type="button"
               className="startGame-button"
               onClick={() => {
-                handleCPUStartButton();
+                handleSetCPUFleetButton();
               }}
             >
               setCPUFleet()

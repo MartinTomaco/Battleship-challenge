@@ -178,11 +178,16 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case ERASE_SHIP: {
-      // Should implement cpuBoard case
+      const { isPlayer } = state;
       const { shipToErase } = action.payload;
-      const newPlayerBoard = [...state.playerBoard];
+      let newTempBoard = [];
+      if (isPlayer) {
+        newTempBoard = [...state.playerBoard];
+      } else {
+        newTempBoard = [...state.cpuBoard];
+      }
       const newShipPlaced = { ...state.shipPlaced };
-      const playerBoardWithoutShip = newPlayerBoard.map(
+      const tempBoardWithoutShip = newTempBoard.map(
         (element) => {
           if (element === shipToErase) {
             return 0;
@@ -191,9 +196,16 @@ const reducer = (state = INITIAL_STATE, action) => {
         },
       );
       newShipPlaced[shipToErase] = false;
+      if (isPlayer) {
+        return {
+          ...state,
+          playerBoard: tempBoardWithoutShip,
+          shipPlaced: newShipPlaced,
+        };
+      }
       return {
         ...state,
-        playerBoard: playerBoardWithoutShip,
+        cpuBoard: tempBoardWithoutShip,
         shipPlaced: newShipPlaced,
       };
     }
