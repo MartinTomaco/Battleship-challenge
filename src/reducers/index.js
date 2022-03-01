@@ -3,6 +3,7 @@ import {
   TOGGLE_GAME_STARTED,
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
   TOGGLE_IS_CHOOSING,
+  TOGGLE_IS_CPU_FLEET_VISIBLE,
   ADD_NEW_SHIP,
   SET_IS_CHOOSING,
   SET_CURRENT_POSITION,
@@ -11,6 +12,7 @@ import {
   MOVE_TO_NEXT_SHIP,
   SET_AUTO_CPU_SUGGEST_POSITION,
   SET_IS_PLAYER,
+  SET_SCREEN_TO_SHOW,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -31,6 +33,8 @@ const INITIAL_STATE = {
   isSuggestedHorizontal: false,
   suggestedPositions: [],
   forbiddenPositions: [],
+  isCpuFleetVisible: false,
+  screenToShow: 'GAME_SCREEN',
 };
 
 // eslint-disable-next-line default-param-last
@@ -119,6 +123,11 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isSuggestedHorizontal: !state.isSuggestedHorizontal,
+      };
+    case TOGGLE_IS_CPU_FLEET_VISIBLE:
+      return {
+        ...state,
+        isCpuFleetVisible: !state.isCpuFleetVisible,
       };
     case SET_IS_CHOOSING: {
       const { isChoosing } = action.payload;
@@ -233,6 +242,13 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         suggestedPositions: [],
+      };
+    }
+    case SET_SCREEN_TO_SHOW: {
+      const { screenToShow: newScreenToShow } = action.payload;
+      return {
+        ...state,
+        screenToShow: newScreenToShow,
       };
     }
     default:

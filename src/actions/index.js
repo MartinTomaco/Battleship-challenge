@@ -7,10 +7,12 @@ import {
   SET_SUGGESTED_POSITION,
   TOGGLE_IS_SUGGESTED_HORIZONTAL,
   TOGGLE_IS_CHOOSING,
+  TOGGLE_IS_CPU_FLEET_VISIBLE,
   ERASE_SHIP,
   SET_AUTO_CPU_SUGGEST_POSITION,
   SET_IS_CHOOSING,
   SET_IS_PLAYER,
+  SET_SCREEN_TO_SHOW,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -36,6 +38,13 @@ const toggleIsStarted = () => {
   };
 };
 export { toggleIsStarted };
+
+const toggleIsCpuFleetVisible = () => {
+  return {
+    type: TOGGLE_IS_CPU_FLEET_VISIBLE,
+  };
+};
+export { toggleIsCpuFleetVisible };
 
 const toggleIsChoosing = () => {
   return {
@@ -106,3 +115,11 @@ const setAutoCpuSuggestPosition = (payload) => {
   };
 };
 export { setAutoCpuSuggestPosition };
+
+const setScreenToShow = (payload) => {
+  return {
+    type: SET_SCREEN_TO_SHOW,
+    payload,
+  };
+};
+export { setScreenToShow };

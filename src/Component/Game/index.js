@@ -8,6 +8,7 @@ import {
   setIsChoosing,
   toggleIsChoosing,
   toggleIsSuggestedHorizontal,
+  toggleIsCpuFleetVisible,
   moveToNextShip,
   setAutoCpuSuggestPosition,
   setIsPlayer,
@@ -17,16 +18,35 @@ import './Game.css';
 
 function Game() {
   const dispatch = useDispatch();
+  const screenToShow = useSelector((state) => state.screenToShow);
   const isStarted = useSelector((state) => state.isStarted);
   const playerName = useSelector((state) => state.playerName);
   const currentShipType = useSelector((state) => state.currentShipType);
   const shipPlaced = useSelector((state) => state.shipPlaced);
+  const shipOrder = useSelector((state) => state.shipOrder);
 
+  const setCpuFleet = () => {
+    // First We remove all ships for debugging purposes
+    const indexOfFistsCpuShip = shipOrder.indexOf('4_cpu');
+    const onlyCpuShipOrder = shipOrder.slice(indexOfFistsCpuShip);
+    onlyCpuShipOrder.forEach((ship) => dispatch(eraseShip({ shipToErase: `${ship}` })));
+
+    dispatch(moveToNextShip({ currentShipType: '2' })); // Ship: 2 is the last player ship
+    for (let index = 0; index < 5; index += 1) {
+      dispatch(setAutoCpuSuggestPosition());
+      dispatch(addNewShip());
+      dispatch(moveToNextShip());
+    }
+    // We need suggestedPosition array empty
+    // dispatch(setCurrentPosition());
+  };
   const handleClickDone = () => {
+    // When Player place the last ship. Set all CPU fleet
     if (currentShipType === '2') {
       dispatch(moveToNextShip({ currentShipType }));
       dispatch(setIsChoosing({ isChoosing: false }));
-      dispatch(setAutoCpuSuggestPosition());
+      dispatch(setIsPlayer({ isPlayer: false }));
+      setCpuFleet();
       return;
     }
     dispatch(moveToNextShip({ currentShipType }));
@@ -44,23 +64,10 @@ function Game() {
     }
   };
   // This handle is only for debugging
-  const handleSetCPUFleetButton = () => {
-    // First delete all possible cpu ships
-    dispatch(eraseShip({ shipToErase: '4_cpu' }));
-    dispatch(eraseShip({ shipToErase: '3a_cpu' }));
-    dispatch(eraseShip({ shipToErase: '3b_cpu' }));
-    dispatch(eraseShip({ shipToErase: '3c_cpu' }));
-    dispatch(eraseShip({ shipToErase: '2_cpu' }));
-    dispatch(moveToNextShip({ currentShipType: '2' })); // Ship: 2 is the last player ship
-    dispatch(setIsPlayer({ isPlayer: false }));
-    for (let index = 0; index < 5; index += 1) {
-      dispatch(setAutoCpuSuggestPosition());
-      dispatch(addNewShip());
-      dispatch(moveToNextShip());
-    }
-  };
+
   const handleShowCPUFleetButton = () => {
     console.log('handleShowCPUFleetButton');
+    dispatch(toggleIsCpuFleetVisible());
   };
   const renderShipsButton = () => {
     return (
@@ -71,90 +78,121 @@ function Game() {
       </>
     );
   };
+  // START_SCREEN
+  // GAME_SCREEN
+  switch (screenToShow) {
+    case 'START_SCREEN':
+      return (
+        <div className="game">
+          <section className="main-container">
+            <section className="top-container">
+              <div className="game-board">
+                <Board />
+              </div>
+              <div className="right-panel">
+                <input
+                  value={playerName}
+                  onChange={(event) => {
+                    dispatch(setPlayerNameAction(event.target.value));
+                  }}
+                  className="name-input"
+                  placeholder="Player name"
+                />
+                <button
+                  disabled={isStarted}
+                  type="button"
+                  className="startGame-button"
+                  onClick={() => {
+                    dispatch(toggleIsChoosing());
+                    dispatch(toggleIsStarted());
+                  }}
+                >
+                  Start Game
+                </button>
+                <button
+                  type="button"
+                  className="startGame-button"
+                  onClick={() => {
+                    dispatch(setIsPlayer({ isPlayer: false }));
+                    setCpuFleet();
+                  }}
+                >
+                  setCPUFleet()
+                </button>
+                <button
+                  type="button"
+                  className="startGame-button"
+                  onClick={() => {
+                    handleShowCPUFleetButton();
+                  }}
+                >
+                  showCPUFleet()
+                </button>
+              </div>
+            </section>
+            <section className="bottom-container">
+              <b>Available ships:</b>
 
-  return (
-    <div className="game">
-      <section className="main-container">
-        <section className="top-container">
-          <div className="game-board">
-            <Board />
-          </div>
-          <div className="right-panel">
-            <input
-              value={playerName}
-              onChange={(event) => {
-                dispatch(setPlayerNameAction(event.target.value));
-              }}
-              className="name-input"
-              placeholder="Player name"
-            />
-            <button
-              disabled={isStarted}
-              type="button"
-              className="startGame-button"
-              onClick={() => {
-                dispatch(toggleIsChoosing());
-                dispatch(toggleIsStarted());
-              }}
-            >
-              Start Game
-            </button>
-            <button
-              type="button"
-              className="startGame-button"
-              onClick={() => {
-                handleSetCPUFleetButton();
-              }}
-            >
-              setCPUFleet()
-            </button>
-            <button
-              type="button"
-              className="startGame-button"
-              onClick={() => {
-                handleShowCPUFleetButton();
-              }}
-            >
-              showCPUFleet()
-            </button>
-          </div>
-        </section>
-        <section className="bottom-container">
-          <b>Available ships:</b>
+              <li>
+                carrier of 4 spaces
+                {currentShipType === '4' && isStarted && (renderShipsButton())}
+              </li>
+              <li>
+                cruiser of 3 spaces
+                {currentShipType === '3a' && (renderShipsButton())}
+              </li>
+              <li>
+                cruiser of 3 spaces
+                {currentShipType === '3b' && (renderShipsButton())}
+              </li>
+              <li>
+                cruiser of 3 spaces
+                {currentShipType === '3c' && (renderShipsButton())}
+              </li>
+              <li>
+                submarine of 2 spaces
+                {currentShipType === '2' && (renderShipsButton())}
+              </li>
+            </section>
+            {isStarted && (
+            <p>
+              <b>
+                Hi
+                {` ${playerName}`}
+                , to start to play please select your ships positions
+              </b>
+            </p>
+            )}
+          </section>
+        </div>
+      );
+    case 'GAME_SCREEN':
+      return (
+        <div className="game">
+          <section className="main-container">
+            <h3>Player Name</h3>
+            <section className="top-container">
 
-          <li>
-            carrier of 4 spaces
-            {currentShipType === '4' && isStarted && (renderShipsButton())}
-          </li>
-          <li>
-            cruiser of 3 spaces
-            {currentShipType === '3a' && (renderShipsButton())}
-          </li>
-          <li>
-            cruiser of 3 spaces
-            {currentShipType === '3b' && (renderShipsButton())}
-          </li>
-          <li>
-            cruiser of 3 spaces
-            {currentShipType === '3c' && (renderShipsButton())}
-          </li>
-          <li>
-            submarine of 2 spaces
-            {currentShipType === '2' && (renderShipsButton())}
-          </li>
-        </section>
-        {isStarted && (
-          <p>
-            <b>
-              Hi
-              {` ${playerName}`}
-              , to start to play please select your ships positions
-            </b>
-          </p>
-        )}
-      </section>
-    </div>
-  );
+              <div className="game-board">
+                <Board />
+              </div>
+
+            </section>
+            <h3>CPU</h3>
+            <section className="top-container">
+
+              <div className="game-board">
+                <Board />
+              </div>
+
+            </section>
+          </section>
+        </div>
+      );
+    default:
+      console.log('switch screenToShow fell into default');
+      break;
+  }
 }
 
 export default Game;
