@@ -17,7 +17,7 @@ const Board = () => {
     for (let i = 0; i < 10; i += 1) {
       rows.push(<div key={i} className="board-row">{renderRow(i)}</div>);
     }
-    return <div>{rows}</div>;
+    return <div className="board">{rows}</div>;
   };
 
   return renderBoard();

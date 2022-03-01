@@ -13,6 +13,7 @@ import {
   setAutoCpuSuggestPosition,
   setIsPlayer,
   addNewShip,
+  setScreenToShow,
 } from '../../actions';
 import './Game.css';
 
@@ -85,30 +86,36 @@ function Game() {
       return (
         <div className="game">
           <section className="main-container">
+            <h3>Battleship Game</h3>
+            <form className="intro-form">
+              <p>To start input your name and press Start button</p>
+              <input
+                value={playerName}
+                onChange={(event) => {
+                  dispatch(setPlayerNameAction(event.target.value));
+                }}
+                className="name-input"
+                placeholder="Player name"
+              />
+              <button
+                disabled={isStarted}
+                type="button"
+                className="startGame-button"
+                onClick={() => {
+                  dispatch(toggleIsChoosing());
+                  dispatch(toggleIsStarted());
+                }}
+              >
+                Start Game
+              </button>
+            </form>
+
             <section className="top-container">
               <div className="game-board">
                 <Board />
               </div>
               <div className="right-panel">
-                <input
-                  value={playerName}
-                  onChange={(event) => {
-                    dispatch(setPlayerNameAction(event.target.value));
-                  }}
-                  className="name-input"
-                  placeholder="Player name"
-                />
-                <button
-                  disabled={isStarted}
-                  type="button"
-                  className="startGame-button"
-                  onClick={() => {
-                    dispatch(toggleIsChoosing());
-                    dispatch(toggleIsStarted());
-                  }}
-                >
-                  Start Game
-                </button>
+
                 <button
                   type="button"
                   className="startGame-button"
@@ -124,9 +131,10 @@ function Game() {
                   className="startGame-button"
                   onClick={() => {
                     handleShowCPUFleetButton();
+                    dispatch(setScreenToShow({ screenToShow: 'GAME_SCREEN' }));
                   }}
                 >
-                  showCPUFleet()
+                  showCPUFleet()|| Go to GAME SCREEN
                 </button>
               </div>
             </section>
@@ -170,7 +178,7 @@ function Game() {
       return (
         <div className="game">
           <section className="main-container">
-            <h3>Player Name</h3>
+            <h3>{playerName || 'Player Name'}</h3>
             <section className="top-container">
 
               <div className="game-board">
@@ -186,6 +194,21 @@ function Game() {
               </div>
 
             </section>
+            <p>
+              {' '}
+              Is Playing:
+              {' '}
+              <b>CPU</b>
+            </p>
+            <button
+              type="button"
+              className="startGame-button"
+              onClick={() => {
+                dispatch(setScreenToShow({ screenToShow: 'START_SCREEN' }));
+              }}
+            >
+              Surrender || Go to START SCREEN
+            </button>
           </section>
         </div>
       );
