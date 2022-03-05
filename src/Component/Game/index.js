@@ -8,7 +8,7 @@ import {
   setIsChoosing,
   toggleIsChoosing,
   toggleIsSuggestedHorizontal,
-  toggleIsCpuFleetVisible,
+  /*   toggleIsCpuFleetVisible, */
   moveToNextShip,
   setAutoCpuSuggestPosition,
   setIsPlayer,
@@ -66,10 +66,10 @@ function Game() {
   };
   // This handle is only for debugging
 
-  const handleShowCPUFleetButton = () => {
+  /*   const handleShowCPUFleetButton = () => {
     console.log('handleShowCPUFleetButton');
     dispatch(toggleIsCpuFleetVisible());
-  };
+  }; */
   const renderShipsButton = () => {
     return (
       <>
@@ -86,37 +86,36 @@ function Game() {
       return (
         <div className="game">
           <section className="main-container">
-            <h3>Battleship Game</h3>
-            <form className="intro-form">
-              <p>To start input your name and press Start button</p>
-              <input
-                value={playerName}
-                onChange={(event) => {
-                  dispatch(setPlayerNameAction(event.target.value));
-                }}
-                className="name-input"
-                placeholder="Player name"
-              />
-              <button
-                disabled={isStarted}
-                type="button"
-                className="startGame-button"
-                onClick={() => {
-                  dispatch(toggleIsChoosing());
-                  dispatch(toggleIsStarted());
-                }}
-              >
-                Start Game
-              </button>
-            </form>
-
             <section className="top-container">
+              <h3>Battleship Game</h3>
+              <form className="intro-form">
+                <p>To start input your name and press Start button</p>
+                <input
+                  value={playerName}
+                  onChange={(event) => {
+                    dispatch(setPlayerNameAction(event.target.value));
+                  }}
+                  className="name-input"
+                  placeholder="Player name"
+                />
+                <button
+                  disabled={isStarted}
+                  type="button"
+                  className="startGame-button"
+                  onClick={() => {
+                    dispatch(toggleIsChoosing());
+                    dispatch(toggleIsStarted());
+                  }}
+                >
+                  Start Game
+                </button>
+              </form>
               <div className="game-board">
                 <Board />
               </div>
               <div className="right-panel">
 
-                <button
+                {/*                 <button
                   type="button"
                   className="startGame-button"
                   onClick={() => {
@@ -135,7 +134,7 @@ function Game() {
                   }}
                 >
                   showCPUFleet()|| Go to GAME SCREEN
-                </button>
+                </button> */}
               </div>
             </section>
             <section className="bottom-container">
@@ -161,16 +160,17 @@ function Game() {
                 submarine of 2 spaces
                 {currentShipType === '2' && (renderShipsButton())}
               </li>
+              {isStarted && (
+              <p>
+                <b>
+                  Hi
+                  {` ${playerName}`}
+                  , to start to play please select your ships positions
+                </b>
+              </p>
+              )}
             </section>
-            {isStarted && (
-            <p>
-              <b>
-                Hi
-                {` ${playerName}`}
-                , to start to play please select your ships positions
-              </b>
-            </p>
-            )}
+
           </section>
         </div>
       );

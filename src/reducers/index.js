@@ -34,7 +34,7 @@ const INITIAL_STATE = {
   suggestedPositions: [],
   forbiddenPositions: [],
   isCpuFleetVisible: false,
-  screenToShow: 'GAME_SCREEN',
+  screenToShow: 'START_SCREEN',
 };
 
 // eslint-disable-next-line default-param-last

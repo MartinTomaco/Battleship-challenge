@@ -4,33 +4,60 @@
   justify-content: center;
   min-width: 350px;
 }
+.game-board {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
 .intro-form{
-  border: solid 1px red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  width: 340px;
+}
+.intro-form > p {
+  margin: 5px;
 }
 .top-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: center;
 }
+
 .right-panel {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
+.main-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .name-input{
-padding: 20px;
-margin: 30px;
+padding: 10px;
+margin: 5px;
 }
 .startGame-button{
-  padding: 20px;
-  margin: 30px;
+  padding: 10px;
+  margin: 5px;
+}
+.bottom-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 340px;
 }
 .shipsButtons {
+  padding: 2px 2px;
   margin: 0 5px;
 }
-.bottom-container{
-  margin: 20px auto;
+.bottom-container>b{
+  margin: 5px;
 }
 .bottom-container>li{
+  height: 25px;
   margin: 5px 0;
 }
 
