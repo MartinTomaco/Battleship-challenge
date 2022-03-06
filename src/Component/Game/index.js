@@ -14,6 +14,7 @@ import {
   setIsPlayer,
   addNewShip,
   setScreenToShow,
+  setSuggestedPosition,
 } from '../../actions';
 import './Game.css';
 
@@ -48,6 +49,7 @@ function Game() {
       dispatch(setIsChoosing({ isChoosing: false }));
       dispatch(setIsPlayer({ isPlayer: false }));
       setCpuFleet();
+      dispatch(setSuggestedPosition([])); // to empty suggested position
       dispatch(setScreenToShow({ screenToShow: 'GAME_SCREEN' }));
       return;
     }
