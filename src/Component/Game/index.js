@@ -8,7 +8,7 @@ import {
   setIsChoosing,
   toggleIsChoosing,
   toggleIsSuggestedHorizontal,
-  /*   toggleIsCpuFleetVisible, */
+  toggleIsCpuFleetVisible,
   moveToNextShip,
   setAutoCpuSuggestPosition,
   setIsPlayer,
@@ -48,6 +48,7 @@ function Game() {
       dispatch(setIsChoosing({ isChoosing: false }));
       dispatch(setIsPlayer({ isPlayer: false }));
       setCpuFleet();
+      dispatch(setScreenToShow({ screenToShow: 'GAME_SCREEN' }));
       return;
     }
     dispatch(moveToNextShip({ currentShipType }));
@@ -204,10 +205,10 @@ function Game() {
               type="button"
               className="startGame-button"
               onClick={() => {
-                dispatch(setScreenToShow({ screenToShow: 'START_SCREEN' }));
+                dispatch(toggleIsCpuFleetVisible());
               }}
             >
-              Surrender || Go to START SCREEN
+              Surrender || showCPUFleet
             </button>
           </section>
         </div>
