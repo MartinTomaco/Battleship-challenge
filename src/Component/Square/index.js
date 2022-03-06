@@ -15,11 +15,11 @@ function Square(props) {
   const cpuBoard = useSelector((state) => state.cpuBoard);
   const currentShipType = useSelector((state) => state.currentShipType);
   const isChoosing = useSelector((state) => state.isChoosing);
-  const isPlayer = useSelector((state) => state.isPlayer);
+  /*   const isPlayer = useSelector((state) => state.isPlayer); */
   const suggestedPositions = useSelector((state) => state.suggestedPositions);
   const forbiddenPositions = useSelector((state) => state.forbiddenPositions);
   const isCpuFleetVisible = useSelector((state) => state.isCpuFleetVisible);
-
+  const { isPlayerBoard, isCpuBoard } = props;
   let { id } = props;
   id = Number(id);
 
@@ -33,7 +33,7 @@ function Square(props) {
   };
   // 4 carrier - 3a 3b 3c cruisers - 2 submarine
   // addedClass = isSelected ? ('selected') : (addedClass);
-  if (isPlayer) {
+  if (isPlayerBoard) {
     addedClass = suggestedPositions.some((element) => element === id) ? (`${addedClass} suggested`) : (addedClass);
     addedClass = forbiddenPositions.some((element) => element === id) ? (`${addedClass} forbidden`) : (addedClass);
     addedClass = playerBoard[id] === '4' ? (`${addedClass} carrier`) : (addedClass);
@@ -42,7 +42,7 @@ function Square(props) {
     addedClass = playerBoard[id] === '3c' ? (`${addedClass} cruiser`) : (addedClass);
     addedClass = playerBoard[id] === '2' ? (`${addedClass} submarine`) : (addedClass);
   }
-  if (isCpuFleetVisible) {
+  if (isCpuFleetVisible && isCpuBoard) {
     addedClass = cpuBoard[id] === '4_cpu' ? (`${addedClass} carrier`) : (addedClass);
     addedClass = cpuBoard[id] === '3a_cpu' ? (`${addedClass} cruiser`) : (addedClass);
     addedClass = cpuBoard[id] === '3b_cpu' ? (`${addedClass} cruiser`) : (addedClass);

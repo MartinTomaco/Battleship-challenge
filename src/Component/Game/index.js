@@ -80,8 +80,6 @@ function Game() {
       </>
     );
   };
-  // START_SCREEN
-  // GAME_SCREEN
   switch (screenToShow) {
     case 'START_SCREEN':
       return (
@@ -112,30 +110,7 @@ function Game() {
                 </button>
               </form>
               <div className="game-board">
-                <Board />
-              </div>
-              <div className="right-panel">
-
-                {/*                 <button
-                  type="button"
-                  className="startGame-button"
-                  onClick={() => {
-                    dispatch(setIsPlayer({ isPlayer: false }));
-                    setCpuFleet();
-                  }}
-                >
-                  setCPUFleet()
-                </button>
-                <button
-                  type="button"
-                  className="startGame-button"
-                  onClick={() => {
-                    handleShowCPUFleetButton();
-                    dispatch(setScreenToShow({ screenToShow: 'GAME_SCREEN' }));
-                  }}
-                >
-                  showCPUFleet()|| Go to GAME SCREEN
-                </button> */}
+                <Board isPlayerBoard />
               </div>
             </section>
             <section className="bottom-container">
@@ -183,7 +158,7 @@ function Game() {
             <section className="top-container">
 
               <div className="game-board">
-                <Board />
+                <Board isPlayerBoard />
               </div>
 
             </section>
@@ -191,7 +166,7 @@ function Game() {
             <section className="top-container">
 
               <div className="game-board">
-                <Board />
+                <Board isCpuBoard />
               </div>
 
             </section>
