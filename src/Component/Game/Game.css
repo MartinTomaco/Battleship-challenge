@@ -52,6 +52,9 @@ margin: 5px;
   padding: 2px 2px;
   margin: 0 5px;
 }
+.bottom-container>div{
+  margin: 5px;
+}
 .bottom-container>b{
   margin: 5px;
 }

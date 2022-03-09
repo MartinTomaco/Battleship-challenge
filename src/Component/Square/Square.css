@@ -33,3 +33,6 @@
 .square.impact {
   background: rgb(251, 48, 48);
 }
+.square.missed {
+  background: rgb(37, 22, 22);
+}

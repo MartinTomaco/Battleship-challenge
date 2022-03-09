@@ -15,6 +15,7 @@ import {
   SET_IS_PLAYER,
   SET_SCREEN_TO_SHOW,
   SET_ADDED_CLASSES,
+  SET_SHIP_STATUS,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -26,6 +27,9 @@ const INITIAL_STATE = {
   shipOrder: ['4', '3a', '3b', '3c', '2', '4_cpu', '3a_cpu', '3b_cpu', '3c_cpu', '2_cpu'],
   shipPlaced: {
     4: false, '3a': false, '3b': false, '3c': false, 2: false, '4_cpu': false, '3a_cpu': false, '3b_cpu': false, '3c_cpu': false, '2_cpu': false,
+  },
+  shipStatus: {
+    4: 4, '3a': 3, '3b': 3, '3c': 3, 2: 2, '4_cpu': 4, '3a_cpu': 3, '3b_cpu': 3, '3c_cpu': 2, '2_cpu': 2,
   },
   playerName: '',
   isStarted: false,
@@ -149,12 +153,9 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     case MOVE_TO_NEXT_SHIP: {
       const { shipOrder, currentShipType: stateCurrentShipType } = state;
-      console.log('stateCurrentShipType:', stateCurrentShipType);
       const payloadCurrentShipType = action?.payload?.currentShipType;
-      console.log('payloadCurrentShipType:', payloadCurrentShipType);
       // If it has payload take itm if not take from state
       const currentShipType = payloadCurrentShipType || stateCurrentShipType;
-      console.log('currentShipType:', currentShipType);
       const index = shipOrder.indexOf(currentShipType);
       if (index + 1 < shipOrder.length) {
         return {
@@ -162,14 +163,12 @@ const reducer = (state = INITIAL_STATE, action) => {
           currentShipType: shipOrder[index + 1],
         };
       }
-      console.log('All ships has been located');
       return {
         ...state,
       };
     }
     case SET_CURRENT_SHIP: {
       const payloadCurrentShipType = action?.payload?.currentShipType;
-      console.log('payloadCurrentShipType:', payloadCurrentShipType);
       return {
         ...state,
         currentShipType: payloadCurrentShipType,
@@ -267,19 +266,43 @@ const reducer = (state = INITIAL_STATE, action) => {
       const { addedClasses: newAddedClasses, id: newId } = action.payload;
       const { isPlayer } = state;
       if (isPlayer) {
-        const newCpuBoardAddedClasses = state.cpuBoardAddedClasses;
+        const newCpuBoardAddedClasses = [...state.cpuBoardAddedClasses];
         newCpuBoardAddedClasses[newId] = state.cpuBoardAddedClasses[newId].concat(newAddedClasses);
         return {
           ...state,
           cpuBoardAddedClasses: newCpuBoardAddedClasses,
         };
       }
-      const newPlayerBoardAddedClasses = state.playerBoardAddedClasses;
+      const newPlayerBoardAddedClasses = [...state.playerBoardAddedClasses];
       newPlayerBoardAddedClasses[newId] = state.newPlayerBoardAddedClasses[newId]
         .concat(newAddedClasses);
       return {
         ...state,
         playerBoardAddedClasses: newPlayerBoardAddedClasses,
+      };
+    }
+    case SET_SHIP_STATUS: {
+      const { id: newId } = action.payload;
+      const { isPlayer, playerBoard, cpuBoard } = state;
+      const newShipStatus = { ...state.shipStatus };
+      if (isPlayer) {
+        const shipType = cpuBoard[newId];
+        if (newShipStatus[shipType] !== 0) {
+          newShipStatus[shipType] -= 1;
+        }
+
+        return {
+          ...state,
+          shipStatus: newShipStatus,
+        };
+      }
+      const shipType = playerBoard[newId];
+      if (newShipStatus[shipType] !== 0) {
+        newShipStatus[shipType] -= 1;
+      }
+      return {
+        ...state,
+        shipStatus: newShipStatus,
       };
     }
     default:

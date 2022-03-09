@@ -15,6 +15,7 @@ import {
   SET_IS_PLAYER,
   SET_SCREEN_TO_SHOW,
   SET_ADDED_CLASSES,
+  SET_SHIP_STATUS,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -33,6 +34,14 @@ const setAddedClassed = (payload) => {
   };
 };
 export { setAddedClassed };
+
+const setShipStatus = (payload) => {
+  return {
+    type: SET_SHIP_STATUS,
+    payload,
+  };
+};
+export { setShipStatus };
 
 const moveToNextShip = (payload) => {
   return {

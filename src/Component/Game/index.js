@@ -146,38 +146,42 @@ function Game() {
               </div>
             </section>
             <section className="bottom-container">
-              <b>Available ships:</b>
-
-              <li>
-                carrier of 4 spaces
-                {currentShipType === '4' && isStarted && (renderShipsButton())}
-              </li>
-              <li>
-                cruiser of 3 spaces
-                {currentShipType === '3a' && (renderShipsButton())}
-              </li>
-              <li>
-                cruiser of 3 spaces
-                {currentShipType === '3b' && (renderShipsButton())}
-              </li>
-              <li>
-                cruiser of 3 spaces
-                {currentShipType === '3c' && (renderShipsButton())}
-              </li>
-              <li>
-                submarine of 2 spaces
-                {currentShipType === '2' && (renderShipsButton())}
-              </li>
               {isStarted && (
-              <p>
-                <b>
-                  Hi
-                  {` ${playerName}`}
-                  , to start to play please select your ships positions
-                </b>
-                {renderShipsRandomButton()}
-              </p>
+              <div>
+                <p>
+                  <b>
+                    Hi
+                    {` ${playerName}`}
+                    , to start to play please select your ships positions. Or draw random positions.
+                  </b>
+                  {renderShipsRandomButton()}
+                </p>
+                <b>Available ships:</b>
+
+                <li>
+                  carrier of 4 spaces
+                  {currentShipType === '4' && isStarted && (renderShipsButton())}
+                </li>
+                <li>
+                  cruiser of 3 spaces
+                  {currentShipType === '3a' && (renderShipsButton())}
+                </li>
+                <li>
+                  cruiser of 3 spaces
+                  {currentShipType === '3b' && (renderShipsButton())}
+                </li>
+                <li>
+                  cruiser of 3 spaces
+                  {currentShipType === '3c' && (renderShipsButton())}
+                </li>
+                <li>
+                  submarine of 2 spaces
+                  {currentShipType === '2' && (renderShipsButton())}
+                </li>
+              </div>
+
               )}
+
             </section>
 
           </section>

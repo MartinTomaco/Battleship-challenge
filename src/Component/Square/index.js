@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addNewShip,
   eraseShip,
+  /* setIsPlayer, */
   setAddedClassed,
+  setShipStatus,
   setCurrentPosition,
   setSuggestedPosition,
 } from '../../actions';
@@ -68,10 +70,15 @@ function Square(props) {
     } else if (isCpuBoard) {
       if (cpuBoard[id] !== 0) {
         dispatch(setAddedClassed({ addedClasses: ' impact', id }));
-        console.log('id:', id);
-        console.log('addedClass:', addedClass);
+        dispatch(setCurrentPosition(id));
+        dispatch(setShipStatus({ id })); // Should be improved (!)
+      } else {
+        dispatch(setAddedClassed({ addedClasses: ' missed', id }));
         dispatch(setCurrentPosition(id));
       }
+      // dispatch(setIsPlayer({ isPlayer: true }));
+      console.log('id:', id);
+      console.log('addedClass:', addedClass);
     }
   };
 
