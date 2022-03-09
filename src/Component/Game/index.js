@@ -15,6 +15,7 @@ import {
   addNewShip,
   setScreenToShow,
   setSuggestedPosition,
+  setCurrentShip,
 } from '../../actions';
 import './Game.css';
 
@@ -22,6 +23,7 @@ function Game() {
   const dispatch = useDispatch();
   const screenToShow = useSelector((state) => state.screenToShow);
   const isStarted = useSelector((state) => state.isStarted);
+  const isPlayer = useSelector((state) => state.isPlayer);
   const playerName = useSelector((state) => state.playerName);
   const currentShipType = useSelector((state) => state.currentShipType);
   const shipPlaced = useSelector((state) => state.shipPlaced);
@@ -51,6 +53,7 @@ function Game() {
       setCpuFleet();
       dispatch(setSuggestedPosition([])); // to empty suggested position
       dispatch(setScreenToShow({ screenToShow: 'GAME_SCREEN' }));
+      dispatch(setIsPlayer({ isPlayer: true }));
       return;
     }
     dispatch(moveToNextShip({ currentShipType }));
@@ -67,18 +70,45 @@ function Game() {
       dispatch(toggleIsSuggestedHorizontal());
     }
   };
-  // This handle is only for debugging
+  const handleChooseRandomly = () => {
+    dispatch(setIsChoosing({ isChoosing: false }));
+    // First We remove all player ships
+    const indexOfFistsPlayerShip = shipOrder.indexOf('4');
+    const indexOfLastPlayerShip = shipOrder.indexOf('2');
+    const onlyPlayerShipOrder = shipOrder.slice(indexOfFistsPlayerShip, indexOfLastPlayerShip + 1);
+    onlyPlayerShipOrder.forEach((ship) => dispatch(eraseShip({ shipToErase: `${ship}` })));
 
-  /*   const handleShowCPUFleetButton = () => {
-    console.log('handleShowCPUFleetButton');
-    dispatch(toggleIsCpuFleetVisible());
-  }; */
+    dispatch(setCurrentShip({ currentShipType: '4' }));
+    for (let index = 0; index < 5; index += 1) {
+      dispatch(setAutoCpuSuggestPosition());
+      dispatch(addNewShip());
+      dispatch(moveToNextShip());
+    }
+  };
+  const handleClickDoneFromRandom = () => {
+    dispatch(moveToNextShip({ currentShipType }));
+    dispatch(setIsChoosing({ isChoosing: false }));
+    dispatch(setIsPlayer({ isPlayer: false }));
+    setCpuFleet();
+    dispatch(setSuggestedPosition([])); // to empty suggested position
+    dispatch(setScreenToShow({ screenToShow: 'GAME_SCREEN' }));
+    dispatch(setIsPlayer({ isPlayer: true }));
+  };
   const renderShipsButton = () => {
     return (
       <>
         <button disabled={!shipPlaced[currentShipType]} onClick={handleClickDone} className="shipsButtons" type="button">Done</button>
         <button onClick={handleClickRotate} onKeyDown={handleKeyDown} className="shipsButtons" type="button">Rotate</button>
         <button onClick={handleClickReset} className="shipsButtons" type="button">Reset</button>
+      </>
+    );
+  };
+  const renderShipsRandomButton = () => {
+    return (
+      <>
+        <button onClick={handleChooseRandomly} className="shipsButtons" type="button">Choose Randomly</button>
+        <button disabled={false} onClick={handleClickDoneFromRandom} className="shipsButtons" type="button">Done</button>
+
       </>
     );
   };
@@ -145,6 +175,7 @@ function Game() {
                   {` ${playerName}`}
                   , to start to play please select your ships positions
                 </b>
+                {renderShipsRandomButton()}
               </p>
               )}
             </section>
@@ -176,7 +207,7 @@ function Game() {
               {' '}
               Is Playing:
               {' '}
-              <b>CPU</b>
+              <b>{isPlayer ? `${playerName}` : 'CPU'}</b>
             </p>
             <button
               type="button"

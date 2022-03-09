@@ -24,6 +24,10 @@
   flex-direction: column;
   justify-content: center;
 }
+.top-container > h3 {
+  font-size: 2rem;
+  margin: 5px;
+}
 
 .main-container{
   display: flex;

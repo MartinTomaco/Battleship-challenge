@@ -1,5 +1,6 @@
 import {
   MOVE_TO_NEXT_SHIP,
+  SET_CURRENT_SHIP,
   ADD_NEW_SHIP,
   SET_CURRENT_POSITION,
   SET_PLAYER_NAME,
@@ -13,6 +14,7 @@ import {
   SET_IS_CHOOSING,
   SET_IS_PLAYER,
   SET_SCREEN_TO_SHOW,
+  SET_ADDED_CLASSES,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -24,6 +26,14 @@ const setPlayerNameAction = (payload) => {
 };
 export { setPlayerNameAction };
 
+const setAddedClassed = (payload) => {
+  return {
+    type: SET_ADDED_CLASSES,
+    payload,
+  };
+};
+export { setAddedClassed };
+
 const moveToNextShip = (payload) => {
   return {
     type: MOVE_TO_NEXT_SHIP,
@@ -31,6 +41,14 @@ const moveToNextShip = (payload) => {
   };
 };
 export { moveToNextShip };
+
+const setCurrentShip = (payload) => {
+  return {
+    type: SET_CURRENT_SHIP,
+    payload,
+  };
+};
+export { setCurrentShip };
 
 const toggleIsStarted = () => {
   return {

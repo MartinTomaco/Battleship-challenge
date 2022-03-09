@@ -1,5 +1,5 @@
 .square {
-  background: #fff;
+  background: rgb(186, 240, 237);
   border: 1px solid #999;
   float: left;
   font-size: 24px;
@@ -21,9 +21,6 @@
 .square.suggested {
   background: rgb(250, 177, 177);
 }
-.square.forbidden {
-  background: rgb(251, 48, 48);
-}
 .square.carrier {
   background: lightgreen;
 }
@@ -31,5 +28,8 @@
   background: lightpink;
 }
 .square.submarine {
-  background: lightblue;
+  background: rgb(83, 105, 112)
+}
+.square.impact {
+  background: rgb(251, 48, 48);
 }

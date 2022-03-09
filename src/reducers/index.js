@@ -10,15 +10,19 @@ import {
   SET_SUGGESTED_POSITION,
   ERASE_SHIP,
   MOVE_TO_NEXT_SHIP,
+  SET_CURRENT_SHIP,
   SET_AUTO_CPU_SUGGEST_POSITION,
   SET_IS_PLAYER,
   SET_SCREEN_TO_SHOW,
+  SET_ADDED_CLASSES,
 } from '../actions/types';
 
 const INITIAL_STATE = {
   isPlayer: true,
   playerBoard: Array(100).fill(0),
+  playerBoardAddedClasses: Array(100).fill(''),
   cpuBoard: Array(100).fill(0),
+  cpuBoardAddedClasses: Array(100).fill(''),
   shipOrder: ['4', '3a', '3b', '3c', '2', '4_cpu', '3a_cpu', '3b_cpu', '3c_cpu', '2_cpu'],
   shipPlaced: {
     4: false, '3a': false, '3b': false, '3c': false, 2: false, '4_cpu': false, '3a_cpu': false, '3b_cpu': false, '3c_cpu': false, '2_cpu': false,
@@ -163,6 +167,14 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
       };
     }
+    case SET_CURRENT_SHIP: {
+      const payloadCurrentShipType = action?.payload?.currentShipType;
+      console.log('payloadCurrentShipType:', payloadCurrentShipType);
+      return {
+        ...state,
+        currentShipType: payloadCurrentShipType,
+      };
+    }
     case ADD_NEW_SHIP: {
       const { isPlayer, currentShipType, suggestedPositions } = state;
       const newPlayerBoard = [...state.playerBoard];
@@ -249,6 +261,25 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         screenToShow: newScreenToShow,
+      };
+    }
+    case SET_ADDED_CLASSES: {
+      const { addedClasses: newAddedClasses, id: newId } = action.payload;
+      const { isPlayer } = state;
+      if (isPlayer) {
+        const newCpuBoardAddedClasses = state.cpuBoardAddedClasses;
+        newCpuBoardAddedClasses[newId] = state.cpuBoardAddedClasses[newId].concat(newAddedClasses);
+        return {
+          ...state,
+          cpuBoardAddedClasses: newCpuBoardAddedClasses,
+        };
+      }
+      const newPlayerBoardAddedClasses = state.playerBoardAddedClasses;
+      newPlayerBoardAddedClasses[newId] = state.newPlayerBoardAddedClasses[newId]
+        .concat(newAddedClasses);
+      return {
+        ...state,
+        playerBoardAddedClasses: newPlayerBoardAddedClasses,
       };
     }
     default:

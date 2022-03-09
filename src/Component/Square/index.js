@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addNewShip,
   eraseShip,
+  setAddedClassed,
   setCurrentPosition,
   setSuggestedPosition,
 } from '../../actions';
@@ -10,6 +11,9 @@ import {
 import './Square.css';
 
 function Square(props) {
+  const { isPlayerBoard, isCpuBoard } = props;
+  let { id } = props;
+  id = Number(id);
   const dispatch = useDispatch();
   const playerBoard = useSelector((state) => state.playerBoard);
   const cpuBoard = useSelector((state) => state.cpuBoard);
@@ -17,25 +21,27 @@ function Square(props) {
   const isChoosing = useSelector((state) => state.isChoosing);
   /*   const isPlayer = useSelector((state) => state.isPlayer); */
   const suggestedPositions = useSelector((state) => state.suggestedPositions);
-  const forbiddenPositions = useSelector((state) => state.forbiddenPositions);
   const isCpuFleetVisible = useSelector((state) => state.isCpuFleetVisible);
-  const { isPlayerBoard, isCpuBoard } = props;
-  let { id } = props;
-  id = Number(id);
+  const playerBoardAddedClasses = useSelector((state) => state.playerBoardAddedClasses);
+  const cpuBoardAddedClasses = useSelector((state) => state.cpuBoardAddedClasses);
 
   let addedClass = '';
-  const ships = {
-    4: 'carrier',
-    '3a': 'cruiser',
-    '3b': 'cruiser',
-    '3c': 'cruiser',
-    2: 'submarine',
-  };
+  if (isPlayerBoard) {
+    addedClass = playerBoardAddedClasses[id];
+  }
+  if (isCpuBoard) {
+    addedClass = cpuBoardAddedClasses[id];
+  }
   // 4 carrier - 3a 3b 3c cruisers - 2 submarine
-  // addedClass = isSelected ? ('selected') : (addedClass);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    setCount(count + 1);
+    console.log(`useEffect ${count}`);
+  }, []); // It's only runs once per render
+
   if (isPlayerBoard) {
     addedClass = suggestedPositions.some((element) => element === id) ? (`${addedClass} suggested`) : (addedClass);
-    addedClass = forbiddenPositions.some((element) => element === id) ? (`${addedClass} forbidden`) : (addedClass);
     addedClass = playerBoard[id] === '4' ? (`${addedClass} carrier`) : (addedClass);
     addedClass = playerBoard[id] === '3a' ? (`${addedClass} cruiser`) : (addedClass);
     addedClass = playerBoard[id] === '3b' ? (`${addedClass} cruiser`) : (addedClass);
@@ -51,20 +57,21 @@ function Square(props) {
   }
 
   const handleClick = () => {
-    if (isChoosing) {
+    if (isChoosing) { // Use in START_SCREEN
       dispatch(setCurrentPosition(id));
       dispatch(eraseShip({ shipToErase: currentShipType }));
       // Early return when there are not positions available
       if (!(suggestedPositions.length)) {
-        console.log('suggestedPositions:', suggestedPositions);
-        console.log('suggested is empty');
         return;
       }
       dispatch(addNewShip({ position: id, currentShipType }));
-      console.log(`A ${ships[currentShipType]} was located`);
-      console.log('suggestedPositions:', suggestedPositions);
-    } else {
-      console.log('id', id);
+    } else if (isCpuBoard) {
+      if (cpuBoard[id] !== 0) {
+        dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+        console.log('id:', id);
+        console.log('addedClass:', addedClass);
+        dispatch(setCurrentPosition(id));
+      }
     }
   };
 
@@ -81,7 +88,6 @@ function Square(props) {
       onClick={handleClick}
       onMouseOver={handleMouseOver}
       onFocus={handleMouseOver} // for accessibility
-      // touchenter={handleMouseOver} Should implement something for mobile
       className={`square ${addedClass}`}
     />
   );
