@@ -274,7 +274,8 @@ const reducer = (state = INITIAL_STATE, action) => {
         };
       }
       const newPlayerBoardAddedClasses = [...state.playerBoardAddedClasses];
-      newPlayerBoardAddedClasses[newId] = state.newPlayerBoardAddedClasses[newId]
+      // There are a possible bug in next line
+      newPlayerBoardAddedClasses[newId] = state.playerBoardAddedClasses[newId]
         .concat(newAddedClasses);
       return {
         ...state,

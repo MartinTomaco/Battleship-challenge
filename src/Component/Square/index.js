@@ -8,6 +8,7 @@ import {
   setShipStatus,
   setCurrentPosition,
   setSuggestedPosition,
+  setIsPlayer,
 } from '../../actions';
 
 import './Square.css';
@@ -79,6 +80,17 @@ function Square(props) {
       // dispatch(setIsPlayer({ isPlayer: true }));
       console.log('id:', id);
       console.log('addedClass:', addedClass);
+    } else if (isPlayerBoard) {
+      dispatch(setIsPlayer({ isPlayer: false }));
+      if (playerBoard[id] !== 0) {
+        dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+        dispatch(setCurrentPosition(id));
+        dispatch(setShipStatus({ id })); // Should be improved (!)
+      } else {
+        dispatch(setAddedClassed({ addedClasses: ' missed', id }));
+        dispatch(setCurrentPosition(id));
+      }
+      dispatch(setIsPlayer({ isPlayer: true }));
     }
   };
 
