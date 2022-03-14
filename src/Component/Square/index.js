@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addNewShip,
@@ -9,6 +9,7 @@ import {
   setCurrentPosition,
   setSuggestedPosition,
   setIsPlayer,
+  setCurrentCpuMove,
 } from '../../actions';
 
 import './Square.css';
@@ -27,6 +28,8 @@ function Square(props) {
   const isCpuFleetVisible = useSelector((state) => state.isCpuFleetVisible);
   const playerBoardAddedClasses = useSelector((state) => state.playerBoardAddedClasses);
   const cpuBoardAddedClasses = useSelector((state) => state.cpuBoardAddedClasses);
+  const previousCpuMove = useSelector((state) => state.previousCpuMove);
+  // const currentCpuMove = useSelector((state) => state.currentCpuMove);
 
   let addedClass = '';
   if (isPlayerBoard) {
@@ -36,12 +39,12 @@ function Square(props) {
     addedClass = cpuBoardAddedClasses[id];
   }
   // 4 carrier - 3a 3b 3c cruisers - 2 submarine
-  const [count, setCount] = useState(0);
+  /*   const [count, setCount] = useState(0);
 
   useEffect(() => {
     setCount(count + 1);
     console.log(`useEffect ${count}`);
-  }, []); // It's only runs once per render
+  }, []); // It's only runs once per render */
 
   if (isPlayerBoard) {
     addedClass = suggestedPositions.some((element) => element === id) ? (`${addedClass} suggested`) : (addedClass);
@@ -58,39 +61,64 @@ function Square(props) {
     addedClass = cpuBoard[id] === '3c_cpu' ? (`${addedClass} cruiser`) : (addedClass);
     addedClass = cpuBoard[id] === '2_cpu' ? (`${addedClass} submarine`) : (addedClass);
   }
+  const placeAShip = () => {
+    dispatch(setCurrentPosition(id));
+    dispatch(eraseShip({ shipToErase: currentShipType }));
+    // Early return when there are not positions available
+    if (!(suggestedPositions.length)) {
+      return;
+    }
+    dispatch(addNewShip({ position: id, currentShipType }));
+  };
 
+  const findNextsCpuMove = () => {
+    const suggestedValues = [];
+    let newRandomId = Math.floor(Math.random() * 100);
+    // If it has already been taken then raffle it again.
+    // eslint-disable-next-line no-loop-func
+    while (previousCpuMove.some((oldId) => oldId === newRandomId)) {
+      newRandomId = Math.floor(Math.random() * 100);
+      if (previousCpuMove.length === 100) {
+        break;
+      }
+    }
+    suggestedValues.push(newRandomId);
+    return (suggestedValues);
+  };
+
+  const playCpu = () => {
+    const nextsCpuMoves = findNextsCpuMove();
+    // console.log('nextsCpuMoves: ', nextsCpuMoves);
+    id = nextsCpuMoves.shift();
+    dispatch(setCurrentCpuMove(id));
+    if (playerBoard[id] !== 0) {
+      dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+      dispatch(setShipStatus({ id })); // Should be improved (!)
+    } else {
+      dispatch(setAddedClassed({ addedClasses: ' missed', id }));
+    }
+
+    dispatch(setIsPlayer({ isPlayer: true }));
+  };
+  const playPlayer = () => {
+    dispatch(setCurrentPosition(id));
+    if (cpuBoard[id] !== 0) {
+      dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+      dispatch(setShipStatus({ id })); // Should be improved (!)
+    } else {
+      dispatch(setAddedClassed({ addedClasses: ' missed', id }));
+    }
+    dispatch(setIsPlayer({ isPlayer: false }));
+    setTimeout(playCpu, 100);
+    // playCpu();
+  };
   const handleClick = () => {
-    if (isChoosing) { // Use in START_SCREEN
-      dispatch(setCurrentPosition(id));
-      dispatch(eraseShip({ shipToErase: currentShipType }));
-      // Early return when there are not positions available
-      if (!(suggestedPositions.length)) {
-        return;
-      }
-      dispatch(addNewShip({ position: id, currentShipType }));
-    } else if (isCpuBoard) {
-      if (cpuBoard[id] !== 0) {
-        dispatch(setAddedClassed({ addedClasses: ' impact', id }));
-        dispatch(setCurrentPosition(id));
-        dispatch(setShipStatus({ id })); // Should be improved (!)
-      } else {
-        dispatch(setAddedClassed({ addedClasses: ' missed', id }));
-        dispatch(setCurrentPosition(id));
-      }
-      // dispatch(setIsPlayer({ isPlayer: true }));
-      console.log('id:', id);
-      console.log('addedClass:', addedClass);
-    } else if (isPlayerBoard) {
-      dispatch(setIsPlayer({ isPlayer: false }));
-      if (playerBoard[id] !== 0) {
-        dispatch(setAddedClassed({ addedClasses: ' impact', id }));
-        dispatch(setCurrentPosition(id));
-        dispatch(setShipStatus({ id })); // Should be improved (!)
-      } else {
-        dispatch(setAddedClassed({ addedClasses: ' missed', id }));
-        dispatch(setCurrentPosition(id));
-      }
-      dispatch(setIsPlayer({ isPlayer: true }));
+    if (isChoosing) { // Used in START_SCREEN
+      placeAShip();
+    } else if (isCpuBoard) { // Used in GAME_SCREEN
+      playPlayer();
+    } else if (isPlayerBoard) { // Used in GAME_SCREEN
+      // playCpu();
     }
   };
 

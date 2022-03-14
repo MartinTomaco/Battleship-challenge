@@ -7,6 +7,7 @@ import {
   ADD_NEW_SHIP,
   SET_IS_CHOOSING,
   SET_CURRENT_POSITION,
+  SET_CURRENT_CPU_MOVE,
   SET_SUGGESTED_POSITION,
   ERASE_SHIP,
   MOVE_TO_NEXT_SHIP,
@@ -33,6 +34,8 @@ const INITIAL_STATE = {
   },
   playerName: '',
   isStarted: false,
+  currentCpuMove: [],
+  previousCpuMove: [],
   currentPos: [],
   previousPos: [],
   currentMousePos: [],
@@ -179,12 +182,13 @@ const reducer = (state = INITIAL_STATE, action) => {
       const newPlayerBoard = [...state.playerBoard];
       const newCpuBoard = [...state.cpuBoard];
       const newShipPlaced = { ...state.shipPlaced };
+      const shipLength = parseInt(currentShipType, 10); // '3a_cpu' => 3
       if (isPlayer) {
-        for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
+        for (let index = 0; index < shipLength; index += 1) {
           newPlayerBoard[suggestedPositions[index]] = currentShipType;
         }
       } else {
-        for (let index = 0; index < parseInt(currentShipType, 10); index += 1) {
+        for (let index = 0; index < shipLength; index += 1) {
           newCpuBoard[suggestedPositions[index]] = currentShipType;
         }
       }
@@ -234,6 +238,13 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         previousPos: state.currentPos,
         currentPos: action.payload,
+      };
+    }
+    case SET_CURRENT_CPU_MOVE: {
+      return {
+        ...state,
+        previousCpuMove: [...state.previousCpuMove, action.payload],
+        currentCpuMove: action.payload,
       };
     }
     case SET_SUGGESTED_POSITION: {

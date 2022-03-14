@@ -103,11 +103,14 @@ function Game() {
       </>
     );
   };
+  const isDoneRandomButtonDisabled = () => {
+    return !(shipPlaced['4'] && shipPlaced['3a'] && shipPlaced['3b'] && shipPlaced['3c'] && shipPlaced['2']);
+  };
   const renderShipsRandomButton = () => {
     return (
       <>
         <button onClick={handleChooseRandomly} className="shipsButtons" type="button">Choose Randomly</button>
-        <button disabled={false} onClick={handleClickDoneFromRandom} className="shipsButtons" type="button">Done</button>
+        <button disabled={isDoneRandomButtonDisabled()} onClick={handleClickDoneFromRandom} className="shipsButtons" type="button">Done</button>
 
       </>
     );

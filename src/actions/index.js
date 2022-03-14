@@ -3,6 +3,7 @@ import {
   SET_CURRENT_SHIP,
   ADD_NEW_SHIP,
   SET_CURRENT_POSITION,
+  SET_CURRENT_CPU_MOVE,
   SET_PLAYER_NAME,
   TOGGLE_GAME_STARTED,
   SET_SUGGESTED_POSITION,
@@ -126,6 +127,14 @@ const setCurrentPosition = (payload) => {
   };
 };
 export { setCurrentPosition };
+
+const setCurrentCpuMove = (payload) => {
+  return {
+    type: SET_CURRENT_CPU_MOVE,
+    payload,
+  };
+};
+export { setCurrentCpuMove };
 
 const setSuggestedPosition = (payload) => {
   return {
