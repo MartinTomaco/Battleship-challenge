@@ -4,6 +4,7 @@ import {
   ADD_NEW_SHIP,
   SET_CURRENT_POSITION,
   SET_CURRENT_CPU_MOVE,
+  SET_NEXTS_CPU_MOVES,
   SET_PLAYER_NAME,
   TOGGLE_GAME_STARTED,
   SET_SUGGESTED_POSITION,
@@ -135,6 +136,14 @@ const setCurrentCpuMove = (payload) => {
   };
 };
 export { setCurrentCpuMove };
+
+const setNextsCpuMoves = (payload) => {
+  return {
+    type: SET_NEXTS_CPU_MOVES,
+    payload,
+  };
+};
+export { setNextsCpuMoves };
 
 const setSuggestedPosition = (payload) => {
   return {

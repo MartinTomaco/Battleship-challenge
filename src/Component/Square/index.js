@@ -10,6 +10,7 @@ import {
   setSuggestedPosition,
   setIsPlayer,
   setCurrentCpuMove,
+  setNextsCpuMoves,
 } from '../../actions';
 
 import './Square.css';
@@ -29,7 +30,7 @@ function Square(props) {
   const playerBoardAddedClasses = useSelector((state) => state.playerBoardAddedClasses);
   const cpuBoardAddedClasses = useSelector((state) => state.cpuBoardAddedClasses);
   const previousCpuMove = useSelector((state) => state.previousCpuMove);
-  // const currentCpuMove = useSelector((state) => state.currentCpuMove);
+  const nextsCpuMoves = useSelector((state) => state.nextsCpuMoves);
 
   let addedClass = '';
   if (isPlayerBoard) {
@@ -71,29 +72,34 @@ function Square(props) {
     dispatch(addNewShip({ position: id, currentShipType }));
   };
 
-  const findNextsCpuMove = () => {
-    const suggestedValues = [];
-    let newRandomId = Math.floor(Math.random() * 100);
-    // If it has already been taken then raffle it again.
-    // eslint-disable-next-line no-loop-func
-    while (previousCpuMove.some((oldId) => oldId === newRandomId)) {
-      newRandomId = Math.floor(Math.random() * 100);
-      if (previousCpuMove.length === 100) {
-        break;
+  const findNextCpuMove = () => {
+    const suggestedValues = nextsCpuMoves;
+    if (suggestedValues.length === 0) {
+      let newRandomId = Math.floor(Math.random() * 100);
+      // If it has already been taken then raffle it again. Its could be improved.
+      // eslint-disable-next-line no-loop-func
+      while (previousCpuMove.some((oldId) => oldId === newRandomId)) {
+        newRandomId = Math.floor(Math.random() * 100);
+        if (previousCpuMove.length === 100) {
+          break;
+        }
       }
+      suggestedValues.push(newRandomId);
     }
-    suggestedValues.push(newRandomId);
     return (suggestedValues);
   };
 
   const playCpu = () => {
-    const nextsCpuMoves = findNextsCpuMove();
+    const nextCpuMove = findNextCpuMove();
     // console.log('nextsCpuMoves: ', nextsCpuMoves);
-    id = nextsCpuMoves.shift();
+    id = nextCpuMove.shift();
     dispatch(setCurrentCpuMove(id));
     if (playerBoard[id] !== 0) {
       dispatch(setAddedClassed({ addedClasses: ' impact', id }));
       dispatch(setShipStatus({ id })); // Should be improved (!)
+      // I have to check if onw ship was destroyed and then empty NextsCpuMoves
+      // And notify both player when it's happens
+      dispatch(setNextsCpuMoves({ id }));
     } else {
       dispatch(setAddedClassed({ addedClasses: ' missed', id }));
     }
@@ -136,7 +142,9 @@ function Square(props) {
       onMouseOver={handleMouseOver}
       onFocus={handleMouseOver} // for accessibility
       className={`square ${addedClass}`}
-    />
+    >
+      {id}
+    </button>
   );
 }
 

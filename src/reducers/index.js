@@ -8,6 +8,7 @@ import {
   SET_IS_CHOOSING,
   SET_CURRENT_POSITION,
   SET_CURRENT_CPU_MOVE,
+  SET_NEXTS_CPU_MOVES,
   SET_SUGGESTED_POSITION,
   ERASE_SHIP,
   MOVE_TO_NEXT_SHIP,
@@ -29,12 +30,14 @@ const INITIAL_STATE = {
   shipPlaced: {
     4: false, '3a': false, '3b': false, '3c': false, 2: false, '4_cpu': false, '3a_cpu': false, '3b_cpu': false, '3c_cpu': false, '2_cpu': false,
   },
+  // Each ship saves the positions where was impacted.
   shipStatus: {
-    4: 4, '3a': 3, '3b': 3, '3c': 3, 2: 2, '4_cpu': 4, '3a_cpu': 3, '3b_cpu': 3, '3c_cpu': 2, '2_cpu': 2,
+    4: [], '3a': [], '3b': [], '3c': [], 2: [], '4_cpu': [], '3a_cpu': [], '3b_cpu': [], '3c_cpu': [], '2_cpu': [],
   },
   playerName: '',
   isStarted: false,
   currentCpuMove: [],
+  nextsCpuMoves: [],
   previousCpuMove: [],
   currentPos: [],
   previousPos: [],
@@ -81,6 +84,29 @@ const reducer = (state = INITIAL_STATE, action) => {
       }
     }
     return !subArrayBoard.some((element) => element !== 0);
+  };
+  const isValidCpuMove = (cpuMove) => {
+    const {
+      previousCpuMove, currentCpuMove,
+    } = state;
+    // Early return when out of range
+    if (cpuMove < 0 || cpuMove > 99) {
+      return false;
+    }
+    const firstInRow = Math.floor(currentCpuMove / 10) * 10;
+    const lastInRow = firstInRow + 9;
+    // I have to put an early return for borders cases
+    if (cpuMove === firstInRow - 1 && currentCpuMove === firstInRow) {
+      return false;
+    }
+    if (cpuMove === lastInRow + 1 && currentCpuMove === lastInRow) {
+      return false;
+    }
+    // Early return when cpuMove was within previous cpu moves
+    if (previousCpuMove.some((prevMove) => prevMove === cpuMove)) {
+      return false;
+    }
+    return true;
   };
   const buildSuggestedCurrentShip = (currentPos, isSuggestedHorizontal) => {
     const { currentShipType } = state;
@@ -266,6 +292,32 @@ const reducer = (state = INITIAL_STATE, action) => {
         suggestedPositions: [],
       };
     }
+    case SET_NEXTS_CPU_MOVES: {
+      // const { previousCpuMove } = state;
+      const { id: currentImpactId } = action.payload;
+      const newNextCpuMoves = [];
+      let unCheckCpuMove = currentImpactId - 10;
+      // Here we need to validate if it is a legal position
+      if (isValidCpuMove(unCheckCpuMove)) {
+        newNextCpuMoves.push(unCheckCpuMove);
+      }
+      unCheckCpuMove = currentImpactId - 1;
+      if (isValidCpuMove(unCheckCpuMove)) {
+        newNextCpuMoves.push(unCheckCpuMove);
+      }
+      unCheckCpuMove = currentImpactId + 1;
+      if (isValidCpuMove(unCheckCpuMove)) {
+        newNextCpuMoves.push(unCheckCpuMove);
+      }
+      unCheckCpuMove = currentImpactId + 10;
+      if (isValidCpuMove(unCheckCpuMove)) {
+        newNextCpuMoves.push(unCheckCpuMove);
+      }
+      return {
+        ...state,
+        nextsCpuMoves: newNextCpuMoves,
+      };
+    }
     case SET_SCREEN_TO_SHOW: {
       const { screenToShow: newScreenToShow } = action.payload;
       return {
@@ -299,22 +351,17 @@ const reducer = (state = INITIAL_STATE, action) => {
       const newShipStatus = { ...state.shipStatus };
       if (isPlayer) {
         const shipType = cpuBoard[newId];
-        if (newShipStatus[shipType] !== 0) {
-          newShipStatus[shipType] -= 1;
-        }
 
         return {
           ...state,
-          shipStatus: newShipStatus,
+          shipStatus: { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) },
         };
       }
       const shipType = playerBoard[newId];
-      if (newShipStatus[shipType] !== 0) {
-        newShipStatus[shipType] -= 1;
-      }
+
       return {
         ...state,
-        shipStatus: newShipStatus,
+        shipStatus: { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) },
       };
     }
     default:
