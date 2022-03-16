@@ -28,6 +28,7 @@ function Game() {
   const currentShipType = useSelector((state) => state.currentShipType);
   const shipPlaced = useSelector((state) => state.shipPlaced);
   const shipOrder = useSelector((state) => state.shipOrder);
+  const thereAreNewMessage = useSelector((state) => state.thereAreNewMessage);
 
   const setCpuFleet = () => {
     // First We remove all ships for debugging purposes
@@ -216,14 +217,18 @@ function Game() {
               {' '}
               <b>{isPlayer ? `${playerName}` : 'CPU'}</b>
             </p>
+            <p>
+              {thereAreNewMessage ? 'A ship has been destroyed' : ''}
+            </p>
             <button
               type="button"
               className="startGame-button"
               onClick={() => {
                 dispatch(toggleIsCpuFleetVisible());
+                // Should Implemented
               }}
             >
-              Surrender || showCPUFleet
+              Surrender
             </button>
           </section>
         </div>

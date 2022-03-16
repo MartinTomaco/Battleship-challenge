@@ -18,6 +18,7 @@ import {
   SET_SCREEN_TO_SHOW,
   SET_ADDED_CLASSES,
   SET_SHIP_STATUS,
+  CHECK_SHIP_STATUS,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
@@ -44,6 +45,14 @@ const setShipStatus = (payload) => {
   };
 };
 export { setShipStatus };
+
+const checkShipStatus = (payload) => {
+  return {
+    type: CHECK_SHIP_STATUS,
+    payload,
+  };
+};
+export { checkShipStatus };
 
 const moveToNextShip = (payload) => {
   return {

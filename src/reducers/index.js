@@ -18,6 +18,7 @@ import {
   SET_SCREEN_TO_SHOW,
   SET_ADDED_CLASSES,
   SET_SHIP_STATUS,
+  CHECK_SHIP_STATUS,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -49,6 +50,7 @@ const INITIAL_STATE = {
   forbiddenPositions: [],
   isCpuFleetVisible: false,
   screenToShow: 'START_SCREEN',
+  thereAreNewMessage: false,
 };
 
 // eslint-disable-next-line default-param-last
@@ -347,21 +349,71 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     case SET_SHIP_STATUS: {
       const { id: newId } = action.payload;
-      const { isPlayer, playerBoard, cpuBoard } = state;
-      const newShipStatus = { ...state.shipStatus };
+      const {
+        isPlayer, playerBoard, cpuBoard,
+      } = state;
+      let newShipStatus = { ...state.shipStatus };
+      let isSunkenShip = false;
       if (isPlayer) {
         const shipType = cpuBoard[newId];
-
+        const shipLength = parseInt(shipType, 10);
+        newShipStatus = { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) };
+        isSunkenShip = newShipStatus[shipType].length === shipLength;
+        console.log('isSunkenShip :', isSunkenShip);
         return {
           ...state,
-          shipStatus: { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) },
+          shipStatus: newShipStatus,
+          thereAreNewMessage: isSunkenShip,
         };
       }
       const shipType = playerBoard[newId];
+      const shipLength = parseInt(shipType, 10);
+      newShipStatus = { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) };
+      isSunkenShip = newShipStatus[shipType].length === shipLength;
+      if (isSunkenShip) {
+        return {
+          ...state,
+          shipStatus: newShipStatus,
+          thereAreNewMessage: isSunkenShip,
+          nextsCpuMoves: [],
+        };
+      }
+      return {
+        ...state,
+        shipStatus: newShipStatus,
+        thereAreNewMessage: isSunkenShip,
+      };
+    }
+    case CHECK_SHIP_STATUS: {
+      // Should implemented
+      // Check if there are any winner
+      const {
+        isPlayer, shipStatus,
+      } = state;
+      if (isPlayer) {
+        if (shipStatus['4_cpu'].length === 4
+        && shipStatus['3a_cpu'].length === 3
+        && shipStatus['3b_cpu'].length === 3
+        && shipStatus['3c_cpu'].length === 3
+        && shipStatus['2_cpu'].length === 2) {
+          console.log('Player win');
+        }
+
+        return {
+          ...state,
+          // Should implemented
+        };
+      } if (shipStatus['4'].length === 4
+      && shipStatus['3a'].length === 3
+      && shipStatus['3b'].length === 3
+      && shipStatus['3c'].length === 3
+      && shipStatus['2'].length === 2) {
+        console.log('CPU win');
+      }
 
       return {
         ...state,
-        shipStatus: { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) },
+        // Should implemented
       };
     }
     default:

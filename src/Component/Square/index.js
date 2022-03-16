@@ -96,10 +96,13 @@ function Square(props) {
     dispatch(setCurrentCpuMove(id));
     if (playerBoard[id] !== 0) {
       dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+
+      dispatch(setNextsCpuMoves({ id }));
       dispatch(setShipStatus({ id })); // Should be improved (!)
       // I have to check if onw ship was destroyed and then empty NextsCpuMoves
       // And notify both player when it's happens
-      dispatch(setNextsCpuMoves({ id }));
+
+      // dispatch(checkShipStatus());
     } else {
       dispatch(setAddedClassed({ addedClasses: ' missed', id }));
     }
@@ -111,6 +114,7 @@ function Square(props) {
     if (cpuBoard[id] !== 0) {
       dispatch(setAddedClassed({ addedClasses: ' impact', id }));
       dispatch(setShipStatus({ id })); // Should be improved (!)
+      // dispatch(checkShipStatus());
     } else {
       dispatch(setAddedClassed({ addedClasses: ' missed', id }));
     }
