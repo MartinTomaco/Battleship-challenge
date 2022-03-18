@@ -39,7 +39,7 @@ const INITIAL_STATE = {
   isStarted: false,
   currentCpuMove: [],
   nextsCpuMoves: [],
-  previousCpuMove: [],
+  previousCpuMoves: [],
   currentPos: [],
   previousPos: [],
   currentMousePos: [],
@@ -87,25 +87,25 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     return !subArrayBoard.some((element) => element !== 0);
   };
-  const isValidCpuMove = (cpuMove) => {
+  const isValidCpuMove = (cpuMoveToCheck) => {
     const {
-      previousCpuMove, currentCpuMove,
+      previousCpuMoves, currentCpuMove,
     } = state;
     // Early return when out of range
-    if (cpuMove < 0 || cpuMove > 99) {
+    if (cpuMoveToCheck < 0 || cpuMoveToCheck > 99) {
       return false;
     }
     const firstInRow = Math.floor(currentCpuMove / 10) * 10;
     const lastInRow = firstInRow + 9;
     // I have to put an early return for borders cases
-    if (cpuMove === firstInRow - 1 && currentCpuMove === firstInRow) {
+    if (cpuMoveToCheck === firstInRow - 1 && currentCpuMove === firstInRow) {
       return false;
     }
-    if (cpuMove === lastInRow + 1 && currentCpuMove === lastInRow) {
+    if (cpuMoveToCheck === lastInRow + 1 && currentCpuMove === lastInRow) {
       return false;
     }
     // Early return when cpuMove was within previous cpu moves
-    if (previousCpuMove.some((prevMove) => prevMove === cpuMove)) {
+    if (previousCpuMoves.some((prevMove) => prevMove === cpuMoveToCheck)) {
       return false;
     }
     return true;
@@ -125,6 +125,19 @@ const reducer = (state = INITIAL_STATE, action) => {
     }
     return newSuggestedPositions;
   };
+  /*   const takeARandomAndNewId = () => {
+    const { previousCpuMoves } = state;
+    let newRandomId = Math.floor(Math.random() * 100);
+    // If it has already been taken then raffle it again. Its could be improved.
+    // eslint-disable-next-line no-loop-func
+    while (previousCpuMoves.some((oldId) => oldId === newRandomId)) {
+      newRandomId = Math.floor(Math.random() * 100);
+      if (previousCpuMoves.length === 100) {
+        break;
+      }
+    }
+    return newRandomId;
+  }; */
   switch (action.type) {
     case SET_AUTO_CPU_SUGGEST_POSITION: {
       let newIsSuggestedHorizontal; let newCurrentPos; let newSuggestedPositions; let isValidated;
@@ -271,7 +284,7 @@ const reducer = (state = INITIAL_STATE, action) => {
     case SET_CURRENT_CPU_MOVE: {
       return {
         ...state,
-        previousCpuMove: [...state.previousCpuMove, action.payload],
+        previousCpuMoves: [...state.previousCpuMoves, action.payload],
         currentCpuMove: action.payload,
       };
     }
@@ -295,29 +308,69 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case SET_NEXTS_CPU_MOVES: {
-      // const { previousCpuMove } = state;
-      const { id: currentImpactId } = action.payload;
-      const newNextCpuMoves = [];
+      // It should be improved...
+      // hit 74, then miss, then hit 75.
+      // It should remember that it hit 74 in first place and try hit 76
+      const { previousCpuMoves, nextsCpuMoves } = state;
+      const currentImpactId = action?.payload?.id;
+      const newNextsCpuMoves = [...nextsCpuMoves];
+
       let unCheckCpuMove = currentImpactId - 10;
       // Here we need to validate if it is a legal position
       if (isValidCpuMove(unCheckCpuMove)) {
-        newNextCpuMoves.push(unCheckCpuMove);
+        newNextsCpuMoves.push(unCheckCpuMove);
       }
       unCheckCpuMove = currentImpactId - 1;
       if (isValidCpuMove(unCheckCpuMove)) {
-        newNextCpuMoves.push(unCheckCpuMove);
+        newNextsCpuMoves.push(unCheckCpuMove);
       }
       unCheckCpuMove = currentImpactId + 1;
       if (isValidCpuMove(unCheckCpuMove)) {
-        newNextCpuMoves.push(unCheckCpuMove);
+        newNextsCpuMoves.push(unCheckCpuMove);
       }
       unCheckCpuMove = currentImpactId + 10;
       if (isValidCpuMove(unCheckCpuMove)) {
-        newNextCpuMoves.push(unCheckCpuMove);
+        newNextsCpuMoves.push(unCheckCpuMove);
       }
+      const toCheckIfIsImpact = previousCpuMoves[previousCpuMoves.length - 2];
+      // const allPreviousImpacts = Object.values(shipStatus).flat();
+      // If previous move is an impact We need delete that move and perpendiculars
+
+      const diff = currentImpactId - toCheckIfIsImpact;
+      // The objective it's a vertical ship:
+      if (1 % diff && Math.abs(diff) === 10) { // (-10) || (10) => 1
+        let indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 1));
+        // If there are not nothing to delete deleteCount = 0
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 1));
+        // If there are not nothing to delete deleteCount = 0
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+      }
+      // The objective it's a horizontal ship:
+      if (!(1 % diff) && Math.abs(diff) === 1) { // (-1) || (1) => 0
+        let indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 10));
+        // If there are not nothing to delete deleteCount = 0
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 10));
+        // If there are not nothing to delete deleteCount = 0
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+      }
+
+      // let previousCpuMove = [];
+
+      // If currentImpactId is in row with previousCpuMove
+
       return {
         ...state,
-        nextsCpuMoves: newNextCpuMoves,
+        nextsCpuMoves: newNextsCpuMoves,
       };
     }
     case SET_SCREEN_TO_SHOW: {
@@ -371,11 +424,12 @@ const reducer = (state = INITIAL_STATE, action) => {
       newShipStatus = { ...newShipStatus, [shipType]: newShipStatus[shipType].concat(newId) };
       isSunkenShip = newShipStatus[shipType].length === shipLength;
       if (isSunkenShip) {
+        // const newRandomId = takeARandomAndNewId();
         return {
           ...state,
           shipStatus: newShipStatus,
           thereAreNewMessage: isSunkenShip,
-          nextsCpuMoves: [],
+          nextsCpuMoves: [], // newRandomId,
         };
       }
       return {

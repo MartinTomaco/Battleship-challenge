@@ -6,6 +6,7 @@ import {
   /* setIsPlayer, */
   setAddedClassed,
   setShipStatus,
+  checkShipStatus,
   setCurrentPosition,
   setSuggestedPosition,
   setIsPlayer,
@@ -29,7 +30,7 @@ function Square(props) {
   const isCpuFleetVisible = useSelector((state) => state.isCpuFleetVisible);
   const playerBoardAddedClasses = useSelector((state) => state.playerBoardAddedClasses);
   const cpuBoardAddedClasses = useSelector((state) => state.cpuBoardAddedClasses);
-  const previousCpuMove = useSelector((state) => state.previousCpuMove);
+  const previousCpuMoves = useSelector((state) => state.previousCpuMoves);
   const nextsCpuMoves = useSelector((state) => state.nextsCpuMoves);
 
   let addedClass = '';
@@ -78,9 +79,9 @@ function Square(props) {
       let newRandomId = Math.floor(Math.random() * 100);
       // If it has already been taken then raffle it again. Its could be improved.
       // eslint-disable-next-line no-loop-func
-      while (previousCpuMove.some((oldId) => oldId === newRandomId)) {
+      while (previousCpuMoves.some((oldId) => oldId === newRandomId)) {
         newRandomId = Math.floor(Math.random() * 100);
-        if (previousCpuMove.length === 100) {
+        if (previousCpuMoves.length === 100) {
           break;
         }
       }
@@ -90,21 +91,21 @@ function Square(props) {
   };
 
   const playCpu = () => {
-    const nextCpuMove = findNextCpuMove();
-    // console.log('nextsCpuMoves: ', nextsCpuMoves);
-    id = nextCpuMove.shift();
-    dispatch(setCurrentCpuMove(id));
-    if (playerBoard[id] !== 0) {
-      dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+    let suggestedValues = nextsCpuMoves;
+    if (nextsCpuMoves.length === 0) {
+      suggestedValues = findNextCpuMove();
+    }
+    const cpuId = suggestedValues.pop();
+    dispatch(setCurrentCpuMove(cpuId));
+    if (playerBoard[cpuId] !== 0) {
+      dispatch(setAddedClassed({ addedClasses: ' impact', id: cpuId }));
 
-      dispatch(setNextsCpuMoves({ id }));
-      dispatch(setShipStatus({ id })); // Should be improved (!)
-      // I have to check if onw ship was destroyed and then empty NextsCpuMoves
-      // And notify both player when it's happens
+      dispatch(setNextsCpuMoves({ id: cpuId }));
+      dispatch(setShipStatus({ id: cpuId }));
 
-      // dispatch(checkShipStatus());
+      dispatch(checkShipStatus());
     } else {
-      dispatch(setAddedClassed({ addedClasses: ' missed', id }));
+      dispatch(setAddedClassed({ addedClasses: ' missed', id: cpuId }));
     }
 
     dispatch(setIsPlayer({ isPlayer: true }));
@@ -114,7 +115,7 @@ function Square(props) {
     if (cpuBoard[id] !== 0) {
       dispatch(setAddedClassed({ addedClasses: ' impact', id }));
       dispatch(setShipStatus({ id })); // Should be improved (!)
-      // dispatch(checkShipStatus());
+      dispatch(checkShipStatus());
     } else {
       dispatch(setAddedClassed({ addedClasses: ' missed', id }));
     }
