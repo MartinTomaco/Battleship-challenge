@@ -1,4 +1,4 @@
-Battleship-challenge
+# Battleship-challenge
 It is a challenge to Frontend React, its consist in develop a batteship game Player vs CPU
 
 <<<<<<< HEAD
@@ -73,6 +73,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 =======
-# Battleship-challenge
-It is a challenge to Frontend React , its consist in develop a batteship game Player vs CPU
->>>>>>> 7b2d8ff0f8b00f359a110dfe32986bb705e8f0b9
