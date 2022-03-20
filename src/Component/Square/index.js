@@ -91,7 +91,7 @@ function Square(props) {
   };
 
   const playCpu = () => {
-    let suggestedValues = nextsCpuMoves;
+    let suggestedValues = [...nextsCpuMoves];
     if (nextsCpuMoves.length === 0) {
       suggestedValues = findNextCpuMove();
     }

@@ -282,10 +282,13 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case SET_CURRENT_CPU_MOVE: {
+      const newNextsCpuMoves = [...state.nextsCpuMoves];
+      newNextsCpuMoves.pop();
       return {
         ...state,
         previousCpuMoves: [...state.previousCpuMoves, action.payload],
         currentCpuMove: action.payload,
+        nextsCpuMoves: newNextsCpuMoves,
       };
     }
     case SET_SUGGESTED_POSITION: {
@@ -311,62 +314,58 @@ const reducer = (state = INITIAL_STATE, action) => {
       // It should be improved...
       // hit 74, then miss, then hit 75.
       // It should remember that it hit 74 in first place and try hit 76
-      const { previousCpuMoves, nextsCpuMoves } = state;
+      const {
+        previousCpuMoves, nextsCpuMoves, shipStatus, playerBoard,
+      } = state;
       const currentImpactId = action?.payload?.id;
       const newNextsCpuMoves = [...nextsCpuMoves];
 
-      let unCheckCpuMove = currentImpactId - 10;
-      // Here we need to validate if it is a legal position
-      if (isValidCpuMove(unCheckCpuMove)) {
-        newNextsCpuMoves.push(unCheckCpuMove);
-      }
-      unCheckCpuMove = currentImpactId - 1;
-      if (isValidCpuMove(unCheckCpuMove)) {
-        newNextsCpuMoves.push(unCheckCpuMove);
-      }
-      unCheckCpuMove = currentImpactId + 1;
-      if (isValidCpuMove(unCheckCpuMove)) {
-        newNextsCpuMoves.push(unCheckCpuMove);
-      }
-      unCheckCpuMove = currentImpactId + 10;
-      if (isValidCpuMove(unCheckCpuMove)) {
-        newNextsCpuMoves.push(unCheckCpuMove);
+      const isPreviousImpactInSameShip = (toCheckIfIsImpact) => {
+        const impactedShipType = playerBoard[currentImpactId];
+        const allPreviousImpactsOnShip = shipStatus[impactedShipType];
+        const result = allPreviousImpactsOnShip.some((pos) => pos === toCheckIfIsImpact);
+        return result;
+      };
+      const unCheckedCpuMoves = [
+        currentImpactId - 10,
+        currentImpactId - 1,
+        currentImpactId + 1,
+        currentImpactId + 10,
+      ];
+      for (let iToCheck = 0; iToCheck < unCheckedCpuMoves.length; iToCheck += 1) {
+        const unCheckCpuMove = unCheckedCpuMoves[iToCheck];
+        if (isValidCpuMove(unCheckCpuMove)) {
+          newNextsCpuMoves.push(unCheckCpuMove);
+        }
       }
       const toCheckIfIsImpact = previousCpuMoves[previousCpuMoves.length - 2];
-      // const allPreviousImpacts = Object.values(shipStatus).flat();
-      // If previous move is an impact We need delete that move and perpendiculars
-
       const diff = currentImpactId - toCheckIfIsImpact;
       // The objective it's a vertical ship:
-      if (1 % diff && Math.abs(diff) === 10) { // (-10) || (10) => 1
+      if ((1 % diff && Math.abs(diff) === 10)
+      || isPreviousImpactInSameShip(currentImpactId - 10)
+      || isPreviousImpactInSameShip(currentImpactId + 10)) { // (-10) || (10) => 1
         let indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 1));
-        // If there are not nothing to delete deleteCount = 0
         if (!(indexToDelete === (-1))) {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
         indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 1));
-        // If there are not nothing to delete deleteCount = 0
         if (!(indexToDelete === (-1))) {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
       }
       // The objective it's a horizontal ship:
-      if (!(1 % diff) && Math.abs(diff) === 1) { // (-1) || (1) => 0
+      if ((!(1 % diff) && Math.abs(diff) === 1)
+      || isPreviousImpactInSameShip(currentImpactId - 1)
+      || isPreviousImpactInSameShip(currentImpactId + 1)) { // (-1) || (1) => 1
         let indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 10));
-        // If there are not nothing to delete deleteCount = 0
         if (!(indexToDelete === (-1))) {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
         indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 10));
-        // If there are not nothing to delete deleteCount = 0
         if (!(indexToDelete === (-1))) {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
       }
-
-      // let previousCpuMove = [];
-
-      // If currentImpactId is in row with previousCpuMove
 
       return {
         ...state,
