@@ -352,6 +352,22 @@ const reducer = (state = INITIAL_STATE, action) => {
         if (!(indexToDelete === (-1))) {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 10 - 1));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 10 + 1));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 10 - 10));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 10 + 10));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
       }
       // The objective it's a horizontal ship:
       if ((!(1 % diff) && Math.abs(diff) === 1)
@@ -362,6 +378,22 @@ const reducer = (state = INITIAL_STATE, action) => {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
         indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 10));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 1 - 10));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId - 1 + 10));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 1 - 10));
+        if (!(indexToDelete === (-1))) {
+          newNextsCpuMoves.splice(indexToDelete, 1);
+        }
+        indexToDelete = newNextsCpuMoves.findIndex((pos) => pos === (currentImpactId + 1 + 10));
         if (!(indexToDelete === (-1))) {
           newNextsCpuMoves.splice(indexToDelete, 1);
         }
