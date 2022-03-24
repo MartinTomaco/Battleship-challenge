@@ -19,16 +19,26 @@ import {
   SET_ADDED_CLASSES,
   SET_SHIP_STATUS,
   CHECK_SHIP_STATUS,
+  SET_MESSAGE_TO_SHOW,
+  SET_IS_GAME_FINISHED,
 } from './types';
 
 // this is an action creator, an action its an object like: {type,payload}
-const setPlayerNameAction = (payload) => {
+const setPlayerName = (payload) => {
   return {
     type: SET_PLAYER_NAME,
     payload,
   };
 };
-export { setPlayerNameAction };
+export { setPlayerName };
+
+const setMessageToShow = (payload) => {
+  return {
+    type: SET_MESSAGE_TO_SHOW,
+    payload,
+  };
+};
+export { setMessageToShow };
 
 const setAddedClassed = (payload) => {
   return {
@@ -98,6 +108,14 @@ const setIsChoosing = (payload) => {
   };
 };
 export { setIsChoosing };
+
+const setIsGameFinished = (payload) => {
+  return {
+    type: SET_IS_GAME_FINISHED,
+    payload,
+  };
+};
+export { setIsGameFinished };
 
 const setIsPlayer = (payload) => {
   return {

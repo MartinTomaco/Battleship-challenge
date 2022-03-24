@@ -24,9 +24,21 @@
   flex-direction: column;
   justify-content: center;
 }
-.top-container > h3 {
+.top-container h3 {
+  margin: 10px 0;
+  width: fit-content;
+}
+.main-title {
   font-size: 2rem;
   margin: 5px;
+}
+.player-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px;
+
 }
 
 .main-container{
@@ -42,6 +54,9 @@ margin: 5px;
   padding: 10px;
   margin: 5px;
 }
+.surrender-button{
+  margin-bottom: 20px;
+}
 .bottom-container {
   display: flex;
   flex-direction: column;
@@ -53,6 +68,9 @@ margin: 5px;
   margin: 0 5px;
 }
 .bottom-container>div{
+  margin: 5px;
+}
+.bottom-container>p{
   margin: 5px;
 }
 .bottom-container>b{
@@ -67,3 +85,6 @@ margin: 5px;
   color: rgb(82, 82, 82)
 }
 
+.redMessage{
+  color: red;
+}

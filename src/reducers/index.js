@@ -19,6 +19,8 @@ import {
   SET_ADDED_CLASSES,
   SET_SHIP_STATUS,
   CHECK_SHIP_STATUS,
+  SET_MESSAGE_TO_SHOW,
+  SET_IS_GAME_FINISHED,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -37,6 +39,7 @@ const INITIAL_STATE = {
   },
   playerName: '',
   isStarted: false,
+  isGameFinished: false,
   currentCpuMove: [],
   nextsCpuMoves: [],
   previousCpuMoves: [],
@@ -51,6 +54,7 @@ const INITIAL_STATE = {
   isCpuFleetVisible: false,
   screenToShow: 'START_SCREEN',
   thereAreNewMessage: false,
+  messageToShow: '',
 };
 
 // eslint-disable-next-line default-param-last
@@ -160,6 +164,11 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         playerName: action.payload,
+      };
+    case SET_MESSAGE_TO_SHOW:
+      return {
+        ...state,
+        messageToShow: action.payload,
       };
     case TOGGLE_GAME_STARTED:
       return {
@@ -411,6 +420,13 @@ const reducer = (state = INITIAL_STATE, action) => {
         screenToShow: newScreenToShow,
       };
     }
+    case SET_IS_GAME_FINISHED: {
+      const { newIsGameFinished } = action.payload;
+      return {
+        ...state,
+        isGameFinished: newIsGameFinished,
+      };
+    }
     case SET_ADDED_CLASSES: {
       const { addedClasses: newAddedClasses, id: newId } = action.payload;
       const { isPlayer } = state;
@@ -473,32 +489,37 @@ const reducer = (state = INITIAL_STATE, action) => {
       // Should implemented
       // Check if there are any winner
       const {
-        isPlayer, shipStatus,
+        isPlayer, shipStatus, playerName,
       } = state;
+      let newMessageToShow = '';
       if (isPlayer) {
         if (shipStatus['4_cpu'].length === 4
         && shipStatus['3a_cpu'].length === 3
         && shipStatus['3b_cpu'].length === 3
         && shipStatus['3c_cpu'].length === 3
         && shipStatus['2_cpu'].length === 2) {
+          newMessageToShow = `Congratulation ${playerName}, you win!`;
           console.log('Player win');
         }
 
         return {
           ...state,
-          // Should implemented
+          messageToShow: newMessageToShow,
+          isGameFinished: true,
         };
       } if (shipStatus['4'].length === 4
       && shipStatus['3a'].length === 3
       && shipStatus['3b'].length === 3
       && shipStatus['3c'].length === 3
       && shipStatus['2'].length === 2) {
+        newMessageToShow = 'All your ship what destroyed, CPU win.';
         console.log('CPU win');
       }
 
       return {
         ...state,
-        // Should implemented
+        messageToShow: newMessageToShow,
+        isGameFinished: true,
       };
     }
     default:

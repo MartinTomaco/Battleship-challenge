@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Board from '../Board';
 import {
   eraseShip,
-  setPlayerNameAction,
+  setPlayerName,
   toggleIsStarted,
   setIsChoosing,
   toggleIsChoosing,
@@ -16,6 +16,7 @@ import {
   setScreenToShow,
   setSuggestedPosition,
   setCurrentShip,
+  setIsGameFinished,
 } from '../../actions';
 import './Game.css';
 
@@ -28,7 +29,7 @@ function Game() {
   const currentShipType = useSelector((state) => state.currentShipType);
   const shipPlaced = useSelector((state) => state.shipPlaced);
   const shipOrder = useSelector((state) => state.shipOrder);
-  const thereAreNewMessage = useSelector((state) => state.thereAreNewMessage);
+  const messageToShow = useSelector((state) => state.messageToShow);
 
   const setCpuFleet = () => {
     // First We remove all ships for debugging purposes
@@ -122,13 +123,13 @@ function Game() {
         <div className="game">
           <section className="main-container">
             <section className="top-container">
-              <h3>Battleship Game</h3>
+              <h3 className="main-title">Battleship Game</h3>
               <form className="intro-form">
                 <p>To start input your name and press Start button</p>
                 <input
                   value={playerName}
                   onChange={(event) => {
-                    dispatch(setPlayerNameAction(event.target.value));
+                    dispatch(setPlayerName(event.target.value));
                   }}
                   className="name-input"
                   placeholder="Player name"
@@ -195,41 +196,48 @@ function Game() {
       return (
         <div className="game">
           <section className="main-container">
-            <h3>{playerName || 'Player Name'}</h3>
+
             <section className="top-container">
+              <section className="player-info">
+                <h3>{playerName || 'Player Name'}</h3>
+                <p>You have 5 ships left</p>
+              </section>
 
               <div className="game-board">
                 <Board isPlayerBoard />
               </div>
 
-            </section>
-            <h3>CPU</h3>
-            <section className="top-container">
-
+              <section className="player-info">
+                <h3>CPU</h3>
+                <p>He has 5 ships left</p>
+              </section>
               <div className="game-board">
                 <Board isCpuBoard />
               </div>
 
             </section>
-            <p>
-              {' '}
-              Is Playing:
-              {' '}
-              <b>{isPlayer ? `${playerName}` : 'CPU'}</b>
-            </p>
-            <p>
-              {thereAreNewMessage ? 'A ship has been destroyed' : ''}
-            </p>
-            <button
-              type="button"
-              className="startGame-button"
-              onClick={() => {
-                dispatch(toggleIsCpuFleetVisible());
-                // Should Implemented
-              }}
-            >
-              Surrender
-            </button>
+            <section className="bottom-container">
+
+              <p>
+                {' '}
+                Is Playing:
+                {' '}
+                <b>
+                  {isPlayer ? `${playerName} ` : 'CPU '}
+                </b>
+                <span className="redMessage">{messageToShow || ''}</span>
+              </p>
+              <button
+                type="button"
+                className="startGame-button surrender-button"
+                onClick={() => {
+                  dispatch(toggleIsCpuFleetVisible());
+                  dispatch(setIsGameFinished(true));
+                }}
+              >
+                Surrender
+              </button>
+            </section>
           </section>
         </div>
       );

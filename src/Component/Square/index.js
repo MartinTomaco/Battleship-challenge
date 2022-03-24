@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addNewShip,
   eraseShip,
-  /* setIsPlayer, */
   setAddedClassed,
   setShipStatus,
   checkShipStatus,
@@ -12,6 +11,7 @@ import {
   setIsPlayer,
   setCurrentCpuMove,
   setNextsCpuMoves,
+  setMessageToShow,
 } from '../../actions';
 
 import './Square.css';
@@ -32,6 +32,7 @@ function Square(props) {
   const cpuBoardAddedClasses = useSelector((state) => state.cpuBoardAddedClasses);
   const previousCpuMoves = useSelector((state) => state.previousCpuMoves);
   const nextsCpuMoves = useSelector((state) => state.nextsCpuMoves);
+  const isGameFinished = useSelector((state) => state.isGameFinished);
 
   let addedClass = '';
   if (isPlayerBoard) {
@@ -112,24 +113,36 @@ function Square(props) {
   };
   const playPlayer = () => {
     dispatch(setCurrentPosition(id));
-    if (cpuBoard[id] !== 0) {
-      dispatch(setAddedClassed({ addedClasses: ' impact', id }));
-      dispatch(setShipStatus({ id })); // Should be improved (!)
-      dispatch(checkShipStatus());
+    // If it a move already played it should do nothing
+    if (cpuBoardAddedClasses[id] === '') {
+      if (cpuBoard[id] !== 0) {
+        dispatch(setAddedClassed({ addedClasses: ' impact', id }));
+        dispatch(setShipStatus({ id })); // Should be improved (!)
+        dispatch(checkShipStatus());
+      } else {
+        dispatch(setAddedClassed({ addedClasses: ' missed', id }));
+        dispatch(setIsPlayer({ isPlayer: false }));
+        setTimeout(playCpu, 200);
+      }
     } else {
-      dispatch(setAddedClassed({ addedClasses: ' missed', id }));
+      dispatch(setMessageToShow('Move already played'));
+      setTimeout(
+        () => (dispatch(setMessageToShow(''))),
+        1000,
+      );
     }
-    dispatch(setIsPlayer({ isPlayer: false }));
-    setTimeout(playCpu, 100);
-    // playCpu();
   };
   const handleClick = () => {
-    if (isChoosing) { // Used in START_SCREEN
-      placeAShip();
-    } else if (isCpuBoard) { // Used in GAME_SCREEN
-      playPlayer();
-    } else if (isPlayerBoard) { // Used in GAME_SCREEN
-      // playCpu();
+    if (!isGameFinished) {
+      if (isChoosing) { // Used in START_SCREEN
+        placeAShip();
+      } else if (isCpuBoard) { // Used in GAME_SCREEN
+        playPlayer();
+      } else if (isPlayerBoard) { // Used in GAME_SCREEN
+        // playCpu();
+      }
+    } else {
+      console.log('The game finish');
     }
   };
 
