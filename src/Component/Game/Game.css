@@ -28,9 +28,12 @@
   margin: 10px 0;
   width: fit-content;
 }
-.main-title {
+h3.main-title {
   font-size: 2rem;
   margin: 5px;
+}
+p > button.shipsButtons {
+  margin-top: 10px;
 }
 .player-info {
   display: flex;
