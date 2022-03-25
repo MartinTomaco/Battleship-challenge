@@ -227,6 +227,7 @@ function Game() {
                 <p className="redMessage">{messageToShow || ''}</p>
               </section>
               <button
+                disabled={isGameFinished}
                 type="button"
                 className="startGame-button surrender-button"
                 onClick={() => {

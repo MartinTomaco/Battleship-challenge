@@ -421,10 +421,12 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     }
     case SET_IS_GAME_FINISHED: {
-      const { newIsGameFinished } = action.payload;
+      const newIsGameFinished = action.payload;
+      const newMessageToShow = 'You have given up. CPU win.';
       return {
         ...state,
         isGameFinished: newIsGameFinished,
+        messageToShow: newMessageToShow,
       };
     }
     case SET_ADDED_CLASSES: {
