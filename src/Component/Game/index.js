@@ -128,6 +128,7 @@ function Game() {
               <form className="intro-form">
                 <p>To start input your name and press Start button</p>
                 <input
+                  disabled={isStarted}
                   value={playerName}
                   onChange={(event) => {
                     dispatch(setPlayerName(event.target.value));
@@ -202,7 +203,7 @@ function Game() {
               <section className="player-info">
                 <h3>{playerName || 'Player Name'}</h3>
                 {/* Should implemented */}
-                <p>You have 5 ships left</p>
+                {/* <p>You have 5 ships left</p> */}
               </section>
 
               <div className="game-board">
@@ -212,7 +213,7 @@ function Game() {
               <section className="player-info">
                 <h3>CPU</h3>
                 {/* Should implemented */}
-                <p>He has 5 ships left</p>
+                {/* <p>He has 5 ships left</p> */}
               </section>
               <div className="game-board">
                 <Board isCpuBoard />

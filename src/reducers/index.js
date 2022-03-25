@@ -160,11 +160,13 @@ const reducer = (state = INITIAL_STATE, action) => {
         suggestedPositions: newSuggestedPositions,
       };
     }
-    case SET_PLAYER_NAME:
+    case SET_PLAYER_NAME: {
+      const newPlayerName = action.payload;
       return {
         ...state,
-        playerName: action.payload,
+        playerName: newPlayerName,
       };
+    }
     case SET_MESSAGE_TO_SHOW:
       return {
         ...state,
