@@ -514,7 +514,7 @@ const reducer = (state = INITIAL_STATE, action) => {
       && shipStatus['3b'].length === 3
       && shipStatus['3c'].length === 3
       && shipStatus['2'].length === 2) {
-        newMessageToShow = 'All your ship what destroyed, CPU win.';
+        newMessageToShow = 'All your ships has been destroyed, CPU win!';
         newIsGameFinished = true;
         console.log('CPU win');
       }

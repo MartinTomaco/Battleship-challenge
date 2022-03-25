@@ -30,6 +30,7 @@ function Game() {
   const shipPlaced = useSelector((state) => state.shipPlaced);
   const shipOrder = useSelector((state) => state.shipOrder);
   const messageToShow = useSelector((state) => state.messageToShow);
+  const isGameFinished = useSelector((state) => state.isGameFinished);
 
   const setCpuFleet = () => {
     // First We remove all ships for debugging purposes
@@ -200,6 +201,7 @@ function Game() {
             <section className="top-container">
               <section className="player-info">
                 <h3>{playerName || 'Player Name'}</h3>
+                {/* Should implemented */}
                 <p>You have 5 ships left</p>
               </section>
 
@@ -209,6 +211,7 @@ function Game() {
 
               <section className="player-info">
                 <h3>CPU</h3>
+                {/* Should implemented */}
                 <p>He has 5 ships left</p>
               </section>
               <div className="game-board">
@@ -217,16 +220,12 @@ function Game() {
 
             </section>
             <section className="bottom-container">
-
-              <p>
-                {' '}
-                Is Playing:
-                {' '}
-                <b>
-                  {isPlayer ? `${playerName} ` : 'CPU '}
-                </b>
-                <span className="redMessage">{messageToShow || ''}</span>
-              </p>
+              <section className="player-info">
+                <p>
+                  {!isGameFinished && ` Is playing: ${isPlayer ? `${playerName} ` : 'CPU '}`}
+                </p>
+                <p className="redMessage">{messageToShow || ''}</p>
+              </section>
               <button
                 type="button"
                 className="startGame-button surrender-button"
@@ -242,7 +241,6 @@ function Game() {
         </div>
       );
     default:
-      console.log('switch screenToShow fell into default');
       break;
   }
 }

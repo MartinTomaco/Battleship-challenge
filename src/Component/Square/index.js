@@ -119,6 +119,9 @@ function Square(props) {
         dispatch(setAddedClassed({ addedClasses: ' impact', id }));
         dispatch(setShipStatus({ id })); // Should be improved (!)
         dispatch(checkShipStatus());
+        // If 2 following lines are delete in case of impact player can play again
+        dispatch(setIsPlayer({ isPlayer: false }));
+        setTimeout(playCpu, 200);
       } else {
         dispatch(setAddedClassed({ addedClasses: ' missed', id }));
         dispatch(setIsPlayer({ isPlayer: false }));
