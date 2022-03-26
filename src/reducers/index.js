@@ -497,6 +497,7 @@ const reducer = (state = INITIAL_STATE, action) => {
       } = state;
       let newMessageToShow = '';
       let newIsGameFinished = false;
+      let newIsCpuFleetVisible = false;
       if (isPlayer) {
         if (shipStatus['4_cpu'].length === 4
         && shipStatus['3a_cpu'].length === 3
@@ -504,6 +505,7 @@ const reducer = (state = INITIAL_STATE, action) => {
         && shipStatus['3c_cpu'].length === 3
         && shipStatus['2_cpu'].length === 2) {
           newMessageToShow = `Congratulation ${playerName}, you win!`;
+          newIsCpuFleetVisible = true;
           newIsGameFinished = true;
           console.log('Player win');
         }
@@ -511,6 +513,7 @@ const reducer = (state = INITIAL_STATE, action) => {
         return {
           ...state,
           messageToShow: newMessageToShow,
+          isCpuFleetVisible: newIsCpuFleetVisible,
           isGameFinished: newIsGameFinished,
         };
       } if (shipStatus['4'].length === 4
@@ -519,6 +522,7 @@ const reducer = (state = INITIAL_STATE, action) => {
       && shipStatus['3c'].length === 3
       && shipStatus['2'].length === 2) {
         newMessageToShow = 'All your ships has been destroyed, CPU win!';
+        newIsCpuFleetVisible = true;
         newIsGameFinished = true;
         console.log('CPU win');
       }
@@ -526,6 +530,7 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         messageToShow: newMessageToShow,
+        isCpuFleetVisible: newIsCpuFleetVisible,
         isGameFinished: newIsGameFinished,
       };
     }
