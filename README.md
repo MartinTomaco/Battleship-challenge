@@ -1,5 +1,14 @@
 # Battleship-challenge
-It is a challenge to Frontend React, its consist in develop a batteship game Player vs CPU.
+
+It is a challenge to a position to Frontend React developer. It's consist in develop a navy batteship game Player vs CPU.
+
+In case you want to try it, without any installtion the webapp was hosted on Vercel at: 
+
+# [https://battleship-gules.vercel.app/](https://battleship-gules.vercel.app/)
+
+Hope you enjoy it!
+
+:)
 
 <<<<<<< HEAD
 # Getting Started with Create React App
